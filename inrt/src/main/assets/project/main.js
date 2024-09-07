@@ -172,13 +172,13 @@ ui.post(function () {
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
     ui.selectOpt.setAdapter(adapter);
     ui.selectOpt.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener({
-        onItemSelected: function(parent, view, position, id) {
+        onItemSelected: function (parent, view, position, id) {
             var option = parent.getItemAtPosition(position)
             // 处理选中项
             console.log("选中的项: " + option);
             storage.put("selectOption", option)
         },
-        onNothingSelected: function(parent) {
+        onNothingSelected: function (parent) {
             // 处理未选中项
         }
     }));
@@ -956,6 +956,8 @@ function execNagadSystemCallTransfer(order) {
     }
     var result = 0
     var message = ""
+    var balance = ""
+    var transId = ""
     launchSysCall("tel:*167")
     //    launchPackage("com.android.contacts")
     sleep(2000)
@@ -988,7 +990,7 @@ function execNagadSystemCallTransfer(order) {
             if (order.operationType == 1)
                 dialog1_input.setText("1")
             else
-                dialog1_input.setText("4")
+                dialog1_input.setText("6")
             clickS(dialog1_button) && sleep(4000)
         } else {
             result = 2
@@ -1052,8 +1054,9 @@ function execNagadSystemCallTransfer(order) {
         let message_tv = id("com.android.phone:id/ussd_message").findOne(500)
         let cancel_button = id("android:id/button2").findOne(500)
         if (message_tv && cancel_button) {
-            result = 3
-            message = message_tv.text()
+            result = 1
+            message = message_tv.text().substring(message.indexOf('Balance: ')).replace('Balance: ', '')
+            balance = message.substring(0, message.indexOf('\n'))
             clickS(cancel_button)
         } else {
             result = 2
@@ -1066,8 +1069,13 @@ function execNagadSystemCallTransfer(order) {
         let cancel_button = id("android:id/button2").findOne(500)
 
         if (findResult && ok_button) {
-            message = findResult.text()
-            clickS(cancel_button) && sleep(2000)
+            result = 1
+            message = findResult.text().substring(message.indexOf('TrxID: ')).replace('TrxId: ', '')
+            transId = message.substring(0, message.indexOf('\n'))
+            message = message.substring(message.indexOf('Balance: ')).replace('Balance: ', '')
+            balance = balance.substring(0, message.indexOf('\n'))
+            message = ""
+            clickS(cancel_button)
         } else {
             result = 2
             message = "回执弹窗未找到！"
@@ -1075,7 +1083,7 @@ function execNagadSystemCallTransfer(order) {
 
     }
     closeTips()
-    gopay.sendOrderResult(order.walletNo, order.walletType, order.orderId, "", order.operationType, result, message, "")
+    gopay.sendOrderResult(order.walletNo, order.walletType, order.orderId, transId, order.operationType, result, message, balance)
 
     launchPackage(myPkg)
     waitForText(myPkg + ':id/.*')
@@ -2249,7 +2257,17 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
             log('未找到app首页')
             let loginBtn = text('Log in').findOne(2000)
             if (!loginBtn) {
+                log('未找到PIN码登录页')
+                let etAccount = id(bKashAgentId('tvEntryAccountNumber')).findOne(2000)
+                let btnNext = text('Next').findOne(1000)
+                if (etAccount && btnNext) {
+                    log('输入手机号, 并执行下一步')
+                    etAccount.setText(mobile)
+                    clickS(btnNext)
+                }
 
+                let btnOperators = id(bKashAgentId('ib_operator')).find()
+                log('node size = ' + btnOperators.length)
             }
             log("loginBtn : %s", loginBtn)
             if (loginBtn) {
