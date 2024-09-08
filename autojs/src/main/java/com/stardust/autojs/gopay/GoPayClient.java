@@ -288,11 +288,14 @@ public class GoPayClient {
                 @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex("date"));
                 @SuppressLint("Range") String sub_id = cursor.getString(cursor.getColumnIndex("sub_id"));
 
+                Log.e("GoPayClient", "phone=" + phone + ", subId=" + subId + "time=" + time);
                 if (Long.parseLong(date) <= Long.parseLong(time)) {
                     isQuit = true;
                 }
                 // 根据需要处理短信内容
                 if (address.contains("NAGAD") && Long.parseLong(date) > Long.parseLong(time)) {
+                    Log.e("GoPayClient", body);
+
                     if (TextUtils.isEmpty(subId) || TextUtils.equals(subId, sub_id)) {
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("sim", phone);
