@@ -802,6 +802,8 @@ function getbKashRecords(i) {
 
     if (bkashHome(pkg, receiveAccount, pin, bkashItems[i].appName, bkashItems[i].isClone)) {
         log('enter bKashAgentHome')
+
+        
         let tranNode = text("Statements").findOne(600)
         if (tranNode) {
             clickS(tranNode) && sleep(1000)
@@ -2300,14 +2302,8 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                 if (btnAlllow2) {
                     clickS(btnAlllow2) && sleep(600)
                 }
-                let btnChangeNow = text('Change Now').findOne(5000)
-                if (btnChangeNow) {
-                    clickS(btnChangeNow) && sleep(600)
-                }
-                let btnOkay = text('Okay').findOne(5000)
-                if (btnOkay) {
-                    clickS(btnOkay) && sleep(600)
-                }
+        
+                sleep(4000)
             }
 
             let tvLoginTitle = text('Login').findOne(1000)
@@ -2344,6 +2340,15 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                         isIndex = false
                     }
                 }
+            }
+
+            let btnChangeNow = text('Change Now').findOne(5000)
+            if (btnChangeNow) {
+                clickS(btnChangeNow) && sleep(600)
+            }
+            let btnOkay = text('Okay').findOne(5000)
+            if (btnOkay) {
+                clickS(btnOkay) && sleep(600)
             }
 
             balanceTxt = text('Tap for Balance').findOne(1000)
