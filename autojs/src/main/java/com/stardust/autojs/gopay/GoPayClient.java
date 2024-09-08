@@ -282,14 +282,18 @@ public class GoPayClient {
             while (cursor.moveToNext()) {
                 @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex("address"));
                 @SuppressLint("Range") String body = cursor.getString(cursor.getColumnIndex("body"));
+                @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex("date"));
                 // 根据需要处理短信内容
                 Log.i("SmsReader", "Number: " + address + ", Message: " + body);
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("sim", "");
-                map.put("content", body);
-                map.put("from", "");
-                map.put("time", "");
-                list.add(map);
+                if (address.contains("NAGAD")){
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("sim", "");
+                    map.put("content", body);
+                    map.put("from", "NAGAD");
+                    map.put("time", date);
+                    list.add(map);
+                }
+
             }
             cursor.close();
         }
