@@ -259,6 +259,7 @@ module.exports = function (runtime, global) {
     'launchApp',
     'getPackageName',
     'getPackageNameList',
+    'getAgentPackageNameList',
     'getAppName',
     'openAppSetting',
     'launchSysCall',
