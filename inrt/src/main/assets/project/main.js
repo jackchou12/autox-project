@@ -2283,9 +2283,7 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                     clickS(btnOperator) && sleep(600)
                 }
                 let btnAlllow = id('com.google.android.gms:id/positive_button').findOne(5000)    
-                let btnAlllow2 = text('Allow').findOne(5000) 
-                let buttonResult = className('android.widget.Button').visibleToUser(true).find()
-                log('btnAllow ' + btnAlllow)
+                let btnAlllow2 = text('Allow').findOne(5000)
                 log('btnAllow ' + btnAlllow)
                 if (btnAlllow) {
                     clickS(btnAlllow) && sleep(600)
@@ -2293,8 +2291,13 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                 if (btnAlllow2) {
                     clickS(btnAlllow2) && sleep(600)
                 }
-                if(buttonResult.length>0){
-                    log('Button number： ' + buttonResult.length)
+                let btnChangeNow = text('Change Now').findOne(5000)
+                if (btnChangeNow) {
+                    clickS(btnChangeNow) && sleep(600)
+                }
+                let btnOkay = text('Okay').findOne(5000)
+                if (btnOkay) {
+                    clickS(btnOkay) && sleep(600)
                 }
             }
 
