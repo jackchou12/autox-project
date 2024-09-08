@@ -297,6 +297,9 @@ public class GoPayClient {
                     Log.e("GoPayClient", body);
 
                     if (TextUtils.isEmpty(subId) || TextUtils.equals(subId, sub_id)) {
+                        Log.e("GoPayClient", subId);
+                        Log.e("GoPayClient", sub_id);
+
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("sim", phone);
                         map.put("content", body);

@@ -659,6 +659,8 @@ function doGetRecordsTask() {
                 log('集合为空')
                 return
             }
+            log(JSON.stringify(list))
+            log('list size = ' + list.length)
             let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
             log(JSON.stringify(res))
             if (res.statusCode == 200) {
