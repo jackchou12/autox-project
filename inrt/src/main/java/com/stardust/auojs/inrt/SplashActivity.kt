@@ -161,7 +161,6 @@ class SplashActivity : ComponentActivity() {
                 delay(1000)
             }
             readSpecialPermissionConfiguration()
-            requestCallPermission()
             requestExternalStoragePermission()
         }
     }
@@ -209,13 +208,11 @@ class SplashActivity : ComponentActivity() {
         storagePermissionLauncher.launch(
             arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CALL_PHONE,
+                Manifest.permission.READ_SMS
             )
         )
-    }
-
-    private fun requestCallPermission(){
-
     }
 
     private fun requestDrawOverlays() {
