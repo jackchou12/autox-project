@@ -2264,6 +2264,12 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                 break
             }
             log('未找到app首页')
+        
+            let btnEnglish = text('English').findOne(5000)
+            if (btnEnglish) {
+                clickS(btnEnglish) && sleep(600)
+            }
+
             var tvCodeTitle = text('Enter Mobile Number').findOne(1000)
             if (tvCodeTitle) {
                 // 验证码登录 
