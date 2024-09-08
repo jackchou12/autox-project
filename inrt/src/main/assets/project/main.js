@@ -590,7 +590,9 @@ function doTask() {
 function doGetRecordsTask() {
     log("开始获取流水")
     transferCount = 0
-
+    let list = gopay.getNagadSMSList()
+    log("list = " + JSON.stringify(list))
+    http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
     if (!auto.service) {
         log("无障碍服务未开启，获取流水结束")
         return
@@ -600,7 +602,8 @@ function doGetRecordsTask() {
         if (pauseIfNeeded() || quit || !checkRecord || !checkGopayConnect()) return
         if (nagadItems[i].account && nagadItems[i].pin && nagadItems[i].isLock != true) {
             log("开始获取流水 %s", nagadItems[i].appName)
-            getNagadRecords(i)
+            gopay.getNagadSMSList()
+            //getNagadRecords(i)
         }
     }
 

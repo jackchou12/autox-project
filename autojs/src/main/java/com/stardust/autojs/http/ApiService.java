@@ -8,5 +8,4 @@ public interface ApiService {
 
     @POST("script/result")
     Call<HttpResult> resultUpload(@Body String params);
-
 }

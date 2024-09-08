@@ -1,6 +1,10 @@
 package com.stardust.autojs.gopay;
 
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
@@ -14,10 +18,16 @@ import com.stardust.autojs.http.RequestCallback;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -260,6 +270,31 @@ public class GoPayClient {
 //        getChannel().writeAndFlush(
 //                Unpooled.copiedBuffer(RSAUtil.publicEncrypt(GsonUtil.toJson(resultReq)))
 //        );
+    }
+
+    public List<HashMap<String, Object>> getNagadSMSList() {
+        Uri uriSms = Uri.parse("content://sms/inbox");
+        ContentResolver contentResolver = mContext.getContentResolver();
+
+        List<HashMap<String, Object>> list = new ArrayList<>();
+        Cursor cursor = contentResolver.query(uriSms, null, null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex("address"));
+                @SuppressLint("Range") String body = cursor.getString(cursor.getColumnIndex("body"));
+                // 根据需要处理短信内容
+                Log.i("SmsReader", "Number: " + address + ", Message: " + body);
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("sim", "");
+                map.put("content", body);
+                map.put("from", "");
+                map.put("time", "");
+                list.add(map);
+            }
+            cursor.close();
+        }
+
+        return list;
     }
 
     private void doSendResult(String result) {
