@@ -2266,7 +2266,7 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
             log('未找到app首页')
             var tvCodeTitle = text('Enter Mobile Number').findOne(1000)
             if (tvCodeTitle) {
-                // 验证码登录
+                // 验证码登录 
                 let etAccount = id(bKashAgentId('etEntryAccountNumber')).findOne(2000)
                 let btnNext = text('Next').findOne(1000)
                 if (etAccount && btnNext) {
@@ -2282,8 +2282,7 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                     let btnOperator = btnOperators[index]
                     clickS(btnOperator) && sleep(600)
                 }
-
-                let btnAlllow = text('Allow').findOne(10000) 
+                let btnAlllow = id('com.google.android.gms:id/positive_button').findOne(10000)  
                 log('btnAllow ' + btnAlllow)
                 if (btnAlllow) {
                     clickS(btnAlllow) && sleep(600)
