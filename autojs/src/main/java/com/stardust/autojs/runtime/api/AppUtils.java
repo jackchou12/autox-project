@@ -100,6 +100,19 @@ public class AppUtils {
     }
 
     @ScriptInterface
+    public List<String> getAgentPackageNameList(String namePrefix) {
+        List<String> pkgs = new ArrayList<>();
+        PackageManager packageManager = mContext.getPackageManager();
+        List<ApplicationInfo> installedApplications = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
+        for (ApplicationInfo applicationInfo : installedApplications) {
+            if (applicationInfo.packageName.contains(namePrefix.toLowerCase())) {
+                pkgs.add(applicationInfo.packageName);
+            }
+        }
+        return pkgs;
+    }
+
+    @ScriptInterface
     public String getAppName(String packageName) {
         PackageManager packageManager = mContext.getPackageManager();
         try {

@@ -332,7 +332,7 @@ events.on("exit", function () {
 
 function getPkgItems(name) {
     var items = []
-    let pkgList = getPackageNameList(name)
+    let pkgList = getAgentPackageNameList(name)
     pkgList.forEach(p => {
         items.push({
             account: "",
