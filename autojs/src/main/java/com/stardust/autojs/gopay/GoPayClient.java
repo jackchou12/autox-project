@@ -5,8 +5,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,8 +23,6 @@ import com.stardust.autojs.http.RequestCallback;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -27,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -272,32 +274,37 @@ public class GoPayClient {
 //        );
     }
 
-    public List<HashMap<String, Object>> getNagadSMSList() {
+    public List<HashMap<String, Object>> getNagadSMSList(String phone, String subId, String time) {
         Uri uriSms = Uri.parse("content://sms/inbox");
         ContentResolver contentResolver = mContext.getContentResolver();
 
         List<HashMap<String, Object>> list = new ArrayList<>();
-        Cursor cursor = contentResolver.query(uriSms, null, null, null, null);
+        Cursor cursor = contentResolver.query(uriSms, null, null, null, "date DESC");
         if (cursor != null) {
-            while (cursor.moveToNext()) {
+            boolean isQuit = false;
+            while (cursor.moveToNext() && !isQuit) {
                 @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex("address"));
                 @SuppressLint("Range") String body = cursor.getString(cursor.getColumnIndex("body"));
                 @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex("date"));
-                // 根据需要处理短信内容
-                Log.i("SmsReader", "Number: " + address + ", Message: " + body);
-                if (address.contains("NAGAD")){
-                    HashMap<String, Object> map = new HashMap<>();
-                    map.put("sim", "");
-                    map.put("content", body);
-                    map.put("from", "NAGAD");
-                    map.put("time", date);
-                    list.add(map);
-                }
+                @SuppressLint("Range") String sub_id = cursor.getString(cursor.getColumnIndex("sub_id"));
 
+                if (Long.parseLong(date) <= Long.parseLong(time)) {
+                    isQuit = true;
+                }
+                // 根据需要处理短信内容
+                if (address.contains("NAGAD") && Long.parseLong(date) > Long.parseLong(time)) {
+                    if (TextUtils.isEmpty(subId) || TextUtils.equals(subId, sub_id)) {
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("sim", phone);
+                        map.put("content", body);
+                        map.put("from", "NAGAD");
+                        map.put("time", date);
+                        list.add(map);
+                    }
+                }
             }
             cursor.close();
         }
-
         return list;
     }
 

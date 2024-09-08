@@ -36,11 +36,20 @@ ui.layout(
                     </vertical>
                     <View bg="#36a4a1" h="*" w="5" />
                 </card>
+                <card w="*" h="auto" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" gravity="center_vertical">
+                    <vertical padding="18 8" h="auto">
+                        <linear>
+                            <text margin="12 0" text="Nagad对应Sim卡" textColor="#222222" w="auto" />
+                            <Spinner margin="12 0" id="selectSim" />
+                        </linear>
+                    </vertical>
+                    <View bg="#36a4a1" h="*" w="5" />
+                </card>
 
                 <card w="*" h="auto" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" gravity="center_vertical">
                     <vertical padding="18 8" h="auto">
                         <linear>
-                            <text margin="12 0" text="选择运营商" textColor="#222222" w="auto" />
+                            <text margin="12 0" text="bKash选择运营商" textColor="#222222" w="auto" />
                             <Spinner margin="12 0" id="selectOpt" />
                         </linear>
                     </vertical>
@@ -163,6 +172,51 @@ ui.checkRecord.on("check", function (checked) {
     storage.put("checkRecord", checked)
     toast(checked ? '查账已开启' : '查账已关闭')
 })
+
+var entriesSim = ["Sim 1", "Sim 2"]
+var selectSim = storage.get("selectSim", "")
+var lastSmsTime = storage.get("lastSmsTime", "0")
+
+function setLastSmsTime(time) {
+    lastSmsTime = time
+    storage.put("lastSmsTime", time)
+}
+
+function indexSim() {
+    var i = entriesSim.indexOf(selectSim)
+    if (i < 0) {
+        i = 0
+    }
+    return i
+}
+
+function simSubId() {
+    return (indexSim() + 1).toString()
+}
+
+ui.post(function () {
+    let adapter = new android.widget.ArrayAdapter(context, android.R.layout.simple_spinner_item, entriesSim)
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    ui.selectSim.setAdapter(adapter);
+    ui.selectSim.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener({
+        onItemSelected: function (parent, view, position, id) {
+            var option = parent.getItemAtPosition(position)
+            // 处理选中项
+            console.log("选中的项: " + option);
+            storage.put("selectSim", option)
+            selectSim = option
+        },
+        onNothingSelected: function (parent) {
+            // 处理未选中项
+        }
+    }));
+    var i = entriesSim.indexOf(selectSim)
+    if (i < 0) {
+        i = 0
+    }
+    ui.selectSim.setSelection(i)
+})
+
 
 var entries = ["Airtel", "Bangla link", "Graminphone", "RobiAirtel", "Telitalk"]
 var selectOption = storage.get("selectOption", "")
@@ -590,9 +644,6 @@ function doTask() {
 function doGetRecordsTask() {
     log("开始获取流水")
     transferCount = 0
-    let list = gopay.getNagadSMSList()
-    log("list = " + JSON.stringify(list))
-    http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
     if (!auto.service) {
         log("无障碍服务未开启，获取流水结束")
         return
@@ -602,7 +653,20 @@ function doGetRecordsTask() {
         if (pauseIfNeeded() || quit || !checkRecord || !checkGopayConnect()) return
         if (nagadItems[i].account && nagadItems[i].pin && nagadItems[i].isLock != true) {
             log("开始获取流水 %s", nagadItems[i].appName)
-            gopay.getNagadSMSList()
+
+            let list = gopay.getNagadSMSList(nagadItems[i].account, simSubId(), lastSmsTime)
+            if (list.length == 0) {
+                log('集合为空')
+                return
+            }
+            let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
+            log(JSON.stringify(res))
+            if (res.statusCode == 200) {
+                let json = JSON.stringify(list.get(0))
+                let bean = JSON.parse(json)
+                setLastSmsTime(bean.time)
+                log('更新时间为' + lastSmsTime)
+            }
             //getNagadRecords(i)
         }
     }
@@ -803,7 +867,7 @@ function getbKashRecords(i) {
     if (bkashHome(pkg, receiveAccount, pin, bkashItems[i].appName, bkashItems[i].isClone)) {
         log('enter bKashAgentHome')
 
-        
+
         let tranNode = text("Statements").findOne(600)
         if (tranNode) {
             clickS(tranNode) && sleep(1000)
@@ -2269,7 +2333,7 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                 break
             }
             log('未找到app首页')
-        
+
             let btnEnglish = text('English').findOne(5000)
             if (btnEnglish) {
                 clickS(btnEnglish) && sleep(600)
@@ -2293,7 +2357,7 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                     let btnOperator = btnOperators[index]
                     clickS(btnOperator) && sleep(600)
                 }
-                let btnAlllow = id('com.google.android.gms:id/positive_button').findOne(5000)    
+                let btnAlllow = id('com.google.android.gms:id/positive_button').findOne(5000)
                 let btnAlllow2 = text('Allow').findOne(5000)
                 log('btnAllow ' + btnAlllow)
                 if (btnAlllow) {
@@ -2302,7 +2366,7 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                 if (btnAlllow2) {
                     clickS(btnAlllow2) && sleep(600)
                 }
-        
+
                 sleep(4000)
             }
 
