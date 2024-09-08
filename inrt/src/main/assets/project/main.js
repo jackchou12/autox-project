@@ -167,6 +167,14 @@ ui.checkRecord.on("check", function (checked) {
 var entries = ["Airtel", "Bangla link", "Graminphone", "RobiAirtel", "Telitalk"]
 var selectOption = storage.get("selectOption", "")
 
+function indexOpertor() {
+    var i = entries.indexOf(selectOption)
+    if (i < 0) {
+        i = 0
+    }
+    return i
+}
+
 ui.post(function () {
     let adapter = new android.widget.ArrayAdapter(context, android.R.layout.simple_spinner_item, entries)
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -177,6 +185,7 @@ ui.post(function () {
             // 处理选中项
             console.log("选中的项: " + option);
             storage.put("selectOption", option)
+            selectOption = option
         },
         onNothingSelected: function (parent) {
             // 处理未选中项
@@ -2255,10 +2264,10 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                 break
             }
             log('未找到app首页')
-            let loginBtn = text('Log in').findOne(2000)
-            if (!loginBtn) {
-                log('未找到PIN码登录页')
-                let etAccount = id(bKashAgentId('tvEntryAccountNumber')).findOne(2000)
+            var tvCodeTitle = text('Enter Mobile Number').findOne(1000)
+            if (tvCodeTitle) {
+                // 验证码登录
+                let etAccount = id(bKashAgentId('etEntryAccountNumber')).findOne(2000)
                 let btnNext = text('Next').findOne(1000)
                 if (etAccount && btnNext) {
                     log('输入手机号, 并执行下一步')
@@ -2266,11 +2275,26 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                     clickS(btnNext)
                 }
 
-                let btnOperators = id(bKashAgentId('ib_operator')).find()
+                let btnOperators = id(bKashAgentId('fl_item_host')).find()
                 log('node size = ' + btnOperators.length)
+                let index = indexOpertor()
+                if (index < btnOperators.length) {
+                    let btnOperator = btnOperators[index]
+                    clickS(btnOperator) && sleep(600)
+                }
+
+                let btnAlllow = text('Allow').findOne(10000) 
+                log('btnAllow ' + btnAlllow)
+                if (btnAlllow) {
+                    clickS(btnAlllow) && sleep(600)
+                }
             }
+
+            let tvLoginTitle = text('Login').findOne(1000)
+            let loginBtn = text('Log in').findOne(2000)
             log("loginBtn : %s", loginBtn)
-            if (loginBtn) {
+            if (tvLoginTitle && loginBtn) {
+                log('pin码登录')
                 let mobileNode = id(bKashAgentId('tvEntryAccountNumber')).findOne(600)
                 log("mobileNode : %s", mobileNode.text())
 
