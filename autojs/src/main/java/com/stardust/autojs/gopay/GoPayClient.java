@@ -1,17 +1,16 @@
 package com.stardust.autojs.gopay;
 
+import static android.content.Context.TELEPHONY_SUBSCRIPTION_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -274,7 +273,26 @@ public class GoPayClient {
 //        );
     }
 
-    public List<HashMap<String, Object>> getNagadSMSList(String phone, String subId, String time) {
+
+    private int getSlotIndex(int subId) {
+        int slotIndex = -1;
+        SubscriptionManager sm = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+            sm = (SubscriptionManager) mContext.getSystemService(TELEPHONY_SUBSCRIPTION_SERVICE);
+            try {
+                for (SubscriptionInfo si : sm.getActiveSubscriptionInfoList()) {
+                    if (si.getSubscriptionId() == subId) {
+                        slotIndex = si.getSimSlotIndex();
+                        break;
+                    }
+                }
+            } catch (SecurityException ignored) {
+            }
+        }
+        return slotIndex;
+    }
+
+    public List<HashMap<String, Object>> getSMSList(String operator, String phone, int slotIndex, String time) {
         Uri uriSms = Uri.parse("content://sms/inbox");
         ContentResolver contentResolver = mContext.getContentResolver();
 
@@ -286,24 +304,20 @@ public class GoPayClient {
                 @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex("address"));
                 @SuppressLint("Range") String body = cursor.getString(cursor.getColumnIndex("body"));
                 @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex("date"));
-                @SuppressLint("Range") String sub_id = cursor.getString(cursor.getColumnIndex("sub_id"));
+                @SuppressLint("Range") int sub_id = cursor.getInt(cursor.getColumnIndex("sub_id"));
 
-                Log.e("GoPayClient", "phone=" + phone + ", subId=" + subId + "time=" + time);
                 if (Long.parseLong(date) <= Long.parseLong(time)) {
                     isQuit = true;
                 }
                 // 根据需要处理短信内容
-                if (address.contains("NAGAD") && Long.parseLong(date) > Long.parseLong(time)) {
+                if (address.contains(operator) && Long.parseLong(date) > Long.parseLong(time)) {
                     Log.e("GoPayClient", body);
 
-                    if (TextUtils.isEmpty(subId) || TextUtils.equals(subId, sub_id)) {
-                        Log.e("GoPayClient", subId);
-                        Log.e("GoPayClient", sub_id);
-
+                    if (getSlotIndex(sub_id) == slotIndex) {
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("sim", phone);
                         map.put("content", body);
-                        map.put("from", "NAGAD");
+                        map.put("from", operator);
                         map.put("time", date);
                         list.add(map);
                     }

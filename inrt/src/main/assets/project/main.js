@@ -175,11 +175,17 @@ ui.checkRecord.on("check", function (checked) {
 
 var entriesSim = ["Sim 1", "Sim 2"]
 var selectSim = storage.get("selectSim", "")
-var lastSmsTime = storage.get("lastSmsTime", "0")
+var lastSmsTime1 = storage.get("lastSmsTime1", "0")
+var lastSmsTime2 = storage.get("lastSmsTime2", "0")
 
-function setLastSmsTime(time) {
-    lastSmsTime = time
-    storage.put("lastSmsTime", time)
+function setLastSmsTime1(time) {
+    lastSmsTime1 = time
+    storage.put("lastSmsTime1", time)
+}
+
+function setLastSmsTime2(time) {
+    lastSmsTime2 = time
+    storage.put("lastSmsTime2", time)
 }
 
 function indexSim() {
@@ -654,20 +660,18 @@ function doGetRecordsTask() {
         if (nagadItems[i].account && nagadItems[i].pin && nagadItems[i].isLock != true) {
             log("开始获取流水 %s", nagadItems[i].appName)
 
-            let list = gopay.getNagadSMSList(nagadItems[i].account, simSubId(), lastSmsTime)
+            let list = gopay.getSMSList("NAGAD", nagadItems[i].account, simSubId(), lastSmsTime1)
             if (list.length == 0) {
                 log('集合为空')
                 return
             }
-            log(JSON.stringify(list))
-            log('list size = ' + list.length)
             let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
             log(JSON.stringify(res))
             if (res.statusCode == 200) {
                 let json = JSON.stringify(list.get(0))
                 let bean = JSON.parse(json)
-                setLastSmsTime(bean.time)
-                log('更新时间为' + lastSmsTime)
+                setLastSmsTime1(bean.time)
+                log('更新时间为' + lastSmsTime1)
             }
             //getNagadRecords(i)
         }
@@ -677,6 +681,19 @@ function doGetRecordsTask() {
         if (pauseIfNeeded() || quit || !checkRecord || !checkGopayConnect()) return
         if (bkashItems[i].account && bkashItems[i].pin && bkashItems[i].isLock != true) {
             log("开始获取流水 %s", bkashItems[i].appName)
+            let list = gopay.getSMSList("bKash", bkashItems[i].account, simSubId(), lastSmsTime2)
+            if (list.length == 0) {
+                log('集合为空')
+                return
+            }
+            let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
+            log(JSON.stringify(res))
+            if (res.statusCode == 200) {
+                let json = JSON.stringify(list.get(0))
+                let bean = JSON.parse(json)
+                setLastSmsTime2(bean.time)
+                log('更新时间为' + lastSmsTime2)
+            }
             getbKashRecords(i)
         }
     }
