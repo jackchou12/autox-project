@@ -886,7 +886,6 @@ function getbKashRecords(i) {
     if (bkashHome(pkg, receiveAccount, pin, bkashItems[i].appName, bkashItems[i].isClone)) {
         log('enter bKashAgentHome')
 
-
         let tranNode = text("Statements").findOne(600)
         if (tranNode) {
             clickS(tranNode) && sleep(1000)
@@ -1058,23 +1057,21 @@ function execNagadSystemCallTransfer(order) {
     launchSysCall("tel:*167")
     //    launchPackage("com.android.contacts")
     sleep(2000)
-    //    let btnStar = id("com.android.contacts:id/star").findOne(500)
-    //    let btnTwo = id("com.android.contacts:id/two").findOne(500)
-    //    let btnFour = id("com.android.contacts:id/four").findOne(500)
-    //    let btnSeven = id("com.android.contacts:id/seven").findOne(500)
-    let btnPound = id("com.android.contacts:id/pound").findOne(500)
-    //
-    //    clickS(btnStar) && sleep(500)
-    //    clickS(btnTwo) && sleep(500)
-    //    clickS(btnFour) && sleep(500)
-    //    clickS(btnSeven) && sleep(500)
+
+    let callPkg = 'com.google.android.dialer:id/'
+    let btnPound = id(callPkg + 'pound').findOne(500)
     clickS(btnPound) && sleep(500)
 
-    let call = id("com.android.contacts:id/call_sim1").findOne(500)
-    if (!call)
-        call = id("com.android.contacts:id/single_call_button").findOne(500)
+    let call = id(callPkg + 'dialpad_voice_call_button').findOne(500)
     if (call) {
-        clickS(call) && sleep(4000)
+        clickS(call) && sleep(2000)
+    } else {
+        result = 2
+        message = "未找到拨号按钮！"
+    }
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(1)
+    if (callSim) {
+        clickS(callSim) && sleep(4000)
     } else {
         result = 2
         message = "未找到拨号按钮！"
@@ -1200,29 +1197,29 @@ function execBKashSystemCallTransfer(order) {
     launchSysCall("tel:*247")
     //    launchPackage("com.android.contacts")
     sleep(2000)
-    let btnPound = id("com.android.contacts:id/pound").findOne(500)
+
+    // let callPkg = 'com.android.contacts:id/'
+    let callPkg = 'com.google.android.dialer:id/'
+    let btnPound = id(callPkg + 'pound').findOne(500)
     clickS(btnPound) && sleep(1500)
 
-    let inputNode = id("com.android.contacts:id/digits").findOne(500)
+    let inputNode = id(callPkg + 'digits').findOne(500)
     if (inputNode && inputNode.text() == '')
         inputNode.setText('*247#')
-    //    let btnStar = id("com.android.contacts:id/star").findOne(500)
-    //    let btnTwo = id("com.android.contacts:id/two").findOne(500)
-    //    let btnFour = id("com.android.contacts:id/four").findOne(500)
-    //    let btnSeven = id("com.android.contacts:id/seven").findOne(500)
-    //    let btnPound = id("com.android.contacts:id/pound").findOne(500)
-    //
-    //    clickS(btnStar) && sleep(500)
-    //    clickS(btnTwo) && sleep(500)
-    //    clickS(btnFour) && sleep(500)
-    //    clickS(btnSeven) && sleep(500)
-    //    clickS(btnPound) && sleep(500)
 
-    let call = id("com.android.contacts:id/call_sim1").findOne(500)
-    if (!call)
-        call = id("com.android.contacts:id/single_call_button").findOne(500)
+    // let call = id("com.android.contacts:id/call_sim1").findOne(500)
+    // if (!call)
+    //     call = id("com.android.contacts:id/single_call_button").findOne(500)
+    let call = id(callPkg + 'dialpad_voice_call_button').findOne(500)
     if (call) {
-        clickS(call) && sleep(4000)
+        clickS(call) && sleep(2000)
+    } else {
+        result = 2
+        message = "未找到拨号按钮！"
+    }
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(0)
+    if (callSim) {
+        clickS(callSim) && sleep(4000)
     } else {
         result = 2
         message = "未找到拨号按钮！"
