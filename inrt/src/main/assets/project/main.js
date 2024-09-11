@@ -663,23 +663,22 @@ function doGetRecordsTask() {
         if (pauseIfNeeded() || quit || !checkRecord || !checkGopayConnect()) return
         if (nagadItems[i].account && nagadItems[i].pin && nagadItems[i].isLock != true) {
             log("开始获取流水 %s", nagadItems[i].appName)
+            //getNagadRecords(i)
 
             let list = gopay.getSMSList("NAGAD", nagadItems[i].account, nagadSimIndex(), lastSmsTime1)
-            if (list.length == 0) {
-                log('集合为空')
-                return
-            } else {
+            if (list.length != 0) {
                 log('集合size=' + list.length)
+                let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
+                log(JSON.stringify(res))
+                if (res.statusCode == 200) {
+                    let json = JSON.stringify(list.get(0))
+                    let bean = JSON.parse(json)
+                    setLastSmsTime1(bean.time)
+                    log('nagad上传更新时间为' + lastSmsTime1)
+                }
+            } else {
+                log('nagad集合为空')
             }
-            let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
-            log(JSON.stringify(res))
-            if (res.statusCode == 200) {
-                let json = JSON.stringify(list.get(0))
-                let bean = JSON.parse(json)
-                setLastSmsTime1(bean.time)
-                log('nagad上传更新时间为' + lastSmsTime1)
-            }
-            //getNagadRecords(i)
         }
     }
 
@@ -688,25 +687,25 @@ function doGetRecordsTask() {
         if (bkashItems[i].account && bkashItems[i].pin && bkashItems[i].isLock != true) {
             log("开始获取流水 %s", bkashItems[i].appName)
             let list = gopay.getSMSList("bKash", bkashItems[i].account, bKashSimIndex(), lastSmsTime2)
-            if (list.length == 0) {
-                log('集合为空')
-                return
-            } else {
+            if (list.length != 0) {
                 log('集合size=' + list.length)
+                let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
+                log(JSON.stringify(res))
+                if (res.statusCode == 200) {
+                    let json = JSON.stringify(list.get(0))
+                    let bean = JSON.parse(json)
+                    setLastSmsTime2(bean.time)
+                    log('bKash上传更新时间为' + lastSmsTime2)
+                }
+                getbKashRecords(i)
+            } else {
+                log('集合为空')
             }
-            let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
-            log(JSON.stringify(res))
-            if (res.statusCode == 200) {
-                let json = JSON.stringify(list.get(0))
-                let bean = JSON.parse(json)
-                setLastSmsTime2(bean.time)
-                log('bKash上传更新时间为' + lastSmsTime2)
-            }
-            getbKashRecords(i)
         }
     }
 
     log("获取流水结束")
+    sleep(5000)
 }
 
 function getNagadRecords(i) {
@@ -1162,7 +1161,8 @@ function execNagadSystemCallTransfer(order) {
         let cancel_button = id("android:id/button2").findOne(1000)
         if (message_tv && cancel_button) {
             result = 1
-            message = message_tv.text().substring(message.indexOf('Balance: ')).replace('Balance: ', '')
+            message = message_tv.text()
+            message = message.substring(message.indexOf('Balance: ')).replace('Balance: ', '')
             balance = message.substring(0, message.indexOf('\n'))
             clickS(cancel_button)
         } else {
@@ -1177,7 +1177,8 @@ function execNagadSystemCallTransfer(order) {
 
         if (findResult && cancel_button) {
             result = 1
-            message = findResult.text().substring(message.indexOf('TrxID: ')).replace('TrxId: ', '')
+            message = findResult.text()
+            message = message.substring(message.indexOf('TrxID: ')).replace('TrxID: ', '')
             transId = message.substring(0, message.indexOf('\n'))
             message = message.substring(message.indexOf('Balance: ')).replace('Balance: ', '')
             balance = balance.substring(0, message.indexOf('\n'))
