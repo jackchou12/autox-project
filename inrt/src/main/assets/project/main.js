@@ -1067,23 +1067,23 @@ function execNagadSystemCallTransfer(order) {
     sleep(2000)
 
     let callPkg = 'com.google.android.dialer:id/'
-    let btnPound = id(callPkg + 'pound').findOne(500)
-    clickS(btnPound) && sleep(500)
+    let btnPound = id(callPkg + 'pound').findOne(1000)
+    clickS(btnPound) && sleep(1000)
 
-    let inputNode = id(callPkg + 'digits').findOne(500)
+    let inputNode = id(callPkg + 'digits').findOne(1000)
     if (inputNode) {
         log(inputNode.text())
         inputNode.setText('*167#')
     }
 
-    let call = id(callPkg + 'dialpad_voice_call_button').findOne(500)
+    let call = id(callPkg + 'dialpad_voice_call_button').findOne(1000)
     if (call) {
         clickS(call) && sleep(2000)
     } else {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(nagadSimIndex())
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(4000).child(nagadSimIndex())
     if (callSim) {
         clickS(callSim) && sleep(4000)
     } else {
@@ -1110,8 +1110,8 @@ function execNagadSystemCallTransfer(order) {
     if (order.operationType == 1) {
         // 转账的中间步骤
         if (result == 0) {
-            let dialog2_input = id("com.android.phone:id/input_field").findOne(500)
-            let dialog2_button = id("android:id/button1").findOne(500)
+            let dialog2_input = id("com.android.phone:id/input_field").findOne(1000)
+            let dialog2_button = id("android:id/button1").findOne(1000)
             if (dialog2_input && dialog2_button) {
                 dialog2_input.setText(order.receiveWalletNo)
                 clickS(dialog2_button) && sleep(4000)
@@ -1122,8 +1122,8 @@ function execNagadSystemCallTransfer(order) {
         }
 
         if (result == 0) {
-            let dialog3_input = id("com.android.phone:id/input_field").findOne(500)
-            let dialog3_button = id("android:id/button1").findOne(500)
+            let dialog3_input = id("com.android.phone:id/input_field").findOne(1000)
+            let dialog3_button = id("android:id/button1").findOne(1000)
             if (dialog3_input && dialog3_button) {
                 dialog3_input.setText(order.amount)
                 clickS(dialog3_button) && sleep(4000)
@@ -1135,8 +1135,8 @@ function execNagadSystemCallTransfer(order) {
     } else {
         // 查询余额的中间步骤
         if (result == 0) {
-            let dialog2_input = id("com.android.phone:id/input_field").findOne(500)
-            let dialog2_button = id("android:id/button1").findOne(500)
+            let dialog2_input = id("com.android.phone:id/input_field").findOne(1000)
+            let dialog2_button = id("android:id/button1").findOne(1000)
             if (dialog2_input && dialog2_button) {
                 dialog2_input.setText("1")
                 clickS(dialog2_button) && sleep(4000)
@@ -1148,8 +1148,8 @@ function execNagadSystemCallTransfer(order) {
     }
 
     if (result == 0) {
-        let dialog4_input = id("com.android.phone:id/input_field").findOne(500)
-        let dialog4_btton = id("android:id/button1").findOne(500)
+        let dialog4_input = id("com.android.phone:id/input_field").findOne(1000)
+        let dialog4_btton = id("android:id/button1").findOne(1000)
         if (dialog4_input && dialog4_btton) {
             dialog4_input.setText(order.pin)
             clickS(dialog4_btton) && sleep(4000)
@@ -1160,8 +1160,8 @@ function execNagadSystemCallTransfer(order) {
     }
 
     if (result == 0 && order.operationType == 3) {
-        let message_tv = id("com.android.phone:id/ussd_message").findOne(500)
-        let cancel_button = id("android:id/button2").findOne(500)
+        let message_tv = id("com.android.phone:id/ussd_message").findOne(1000)
+        let cancel_button = id("android:id/button2").findOne(1000)
         if (message_tv && cancel_button) {
             result = 1
             message = message_tv.text().substring(message.indexOf('Balance: ')).replace('Balance: ', '')
@@ -1174,8 +1174,8 @@ function execNagadSystemCallTransfer(order) {
     }
 
     if (result == 0 && order.operationType == 1) {
-        let findResult = id("com.android.phone:id/ussd_message").findOne(500)
-        let cancel_button = id("android:id/button2").findOne(500)
+        let findResult = id("com.android.phone:id/ussd_message").findOne(4000)
+        let cancel_button = id("android:id/button2").findOne(4000)
 
         if (findResult && cancel_button) {
             result = 1
@@ -1186,8 +1186,8 @@ function execNagadSystemCallTransfer(order) {
             message = ""
             clickS(cancel_button)
         } else {
-            result = 2
-            message = "回执弹窗未找到！"
+            result = 0
+            message = "转账超时，回执弹窗未找到！"
         }
 
     }
@@ -1215,10 +1215,10 @@ function execBKashSystemCallTransfer(order) {
 
     // let callPkg = 'com.android.contacts:id/'
     let callPkg = 'com.google.android.dialer:id/'
-    let btnPound = id(callPkg + 'pound').findOne(500)
+    let btnPound = id(callPkg + 'pound').findOne(1000)
     clickS(btnPound) && sleep(1500)
 
-    let inputNode = id(callPkg + 'digits').findOne(500)
+    let inputNode = id(callPkg + 'digits').findOne(1000)
     if (inputNode) {
         log(inputNode.text())
         inputNode.setText('*247#')
@@ -1229,14 +1229,14 @@ function execBKashSystemCallTransfer(order) {
     // let call = id("com.android.contacts:id/call_sim1").findOne(500)
     // if (!call)
     //     call = id("com.android.contacts:id/single_call_button").findOne(500)
-    let call = id(callPkg + 'dialpad_voice_call_button').findOne(500)
+    let call = id(callPkg + 'dialpad_voice_call_button').findOne(1000)
     if (call) {
         clickS(call) && sleep(2000)
     } else {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(bKashSimIndex())
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(4000).child(bKashSimIndex())
     if (callSim) {
         clickS(callSim) && sleep(4000)
     } else {
@@ -1245,8 +1245,8 @@ function execBKashSystemCallTransfer(order) {
     }
 
     if (result == 0) {
-        let dialog1_input = id("com.android.phone:id/input_field").findOne(500)
-        let dialog1_button = id("android:id/button1").findOne(500)
+        let dialog1_input = id("com.android.phone:id/input_field").findOne(1000)
+        let dialog1_button = id("android:id/button1").findOne(1000)
         if (dialog1_input && dialog1_button) {
             if (order.operationType == 1)
                 dialog1_input.setText("1")
@@ -1262,8 +1262,8 @@ function execBKashSystemCallTransfer(order) {
     if (order.operationType == 1) {
         // 转账的中间步骤
         if (result == 0) {
-            let dialog2_input = id("com.android.phone:id/input_field").findOne(500)
-            let dialog2_button = id("android:id/button1").findOne(500)
+            let dialog2_input = id("com.android.phone:id/input_field").findOne(1000)
+            let dialog2_button = id("android:id/button1").findOne(1000)
             if (dialog2_input && dialog2_button) {
                 dialog2_input.setText(order.receiveWalletNo)
                 clickS(dialog2_button) && sleep(4000)
@@ -1274,8 +1274,8 @@ function execBKashSystemCallTransfer(order) {
         }
 
         if (result == 0) {
-            let dialog3_input = id("com.android.phone:id/input_field").findOne(500)
-            let dialog3_button = id("android:id/button1").findOne(500)
+            let dialog3_input = id("com.android.phone:id/input_field").findOne(1000)
+            let dialog3_button = id("android:id/button1").findOne(1000)
             if (dialog3_input && dialog3_button) {
                 dialog3_input.setText(order.amount)
                 clickS(dialog3_button) && sleep(4000)
@@ -1287,8 +1287,8 @@ function execBKashSystemCallTransfer(order) {
     } else {
         // 查询余额的中间步骤
         if (result == 0) {
-            let dialog2_input = id("com.android.phone:id/input_field").findOne(500)
-            let dialog2_button = id("android:id/button1").findOne(500)
+            let dialog2_input = id("com.android.phone:id/input_field").findOne(1000)
+            let dialog2_button = id("android:id/button1").findOne(1000)
             if (dialog2_input && dialog2_button) {
                 dialog2_input.setText("1")
                 clickS(dialog2_button) && sleep(4000)
@@ -1300,8 +1300,8 @@ function execBKashSystemCallTransfer(order) {
     }
 
     if (result == 0) {
-        let dialog4_input = id("com.android.phone:id/input_field").findOne(500)
-        let dialog4_btton = id("android:id/button1").findOne(500)
+        let dialog4_input = id("com.android.phone:id/input_field").findOne(1000)
+        let dialog4_btton = id("android:id/button1").findOne(1000)
         if (dialog4_input && dialog4_btton) {
             dialog4_input.setText(order.pin)
             clickS(dialog4_btton) && sleep(4000)
@@ -1312,8 +1312,8 @@ function execBKashSystemCallTransfer(order) {
     }
 
     if (result == 0 && order.operationType == 3) {
-        let message_tv = id("com.android.phone:id/ussd_message").findOne(500)
-        let cancel_button = id("android:id/button2").findOne(500)
+        let message_tv = id("com.android.phone:id/ussd_message").findOne(1000)
+        let cancel_button = id("android:id/button2").findOne(1000)
         if (message_tv && cancel_button) {
             result = 1
             message = message_tv.text()
@@ -1329,7 +1329,7 @@ function execBKashSystemCallTransfer(order) {
 
     if (result == 0 && order.operationType == 1) {
         let findResult = className('android.widget.TextView').visibleToUser(true).find()
-        let ok_button = id("android:id/button1").findOne(500)
+        let ok_button = id("android:id/button1").findOne(1000)
 
         if (findResult && ok_button) {
             if (findResult.length > 1) {
@@ -1348,8 +1348,8 @@ function execBKashSystemCallTransfer(order) {
             }
             clickS(ok_button) && sleep(2000)
         } else {
-            result = 2
-            message = "回执弹窗未找到！"
+            result = 0
+            message = "转账超时，回执弹窗未找到！"
         }
 
     }
