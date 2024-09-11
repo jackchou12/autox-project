@@ -1009,13 +1009,13 @@ function doTransferTask(str) {
     log("开始转账：%s", str)
     transferCount++
     let order = JSON.parse(str)
-      order.receiveWalletNo = "01705787770"
+      order.receiveWalletNo = "01985694586"
               order.amount = "100"
        order.pin = "6565"
-       order.walletNo = '01705787770'
-       order.walletType = 'Nagad'
+       order.walletNo = '01705787770' 
        order.operationType = 1
-    var transactionId = ""
+       order.walletType = 
+    var transactionId = "Nagad"
     var result = 0
     var message = ""
     var balance = ""
@@ -1100,7 +1100,7 @@ function execNagadSystemCallTransfer(order) {
             message = "拨号失败或者拨号超时，Carrier info选择弹窗未找到！"
         }
     }
-
+    sleep(10000)
     if (order.operationType == 1) {
         // 转账的中间步骤
         if (result == 0) {
