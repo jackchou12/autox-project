@@ -1012,7 +1012,7 @@ function doTransferTask(str) {
       order.receiveWalletNo = "01810147106"
               order.amount = "100"
        order.pin = "11222"
-       order.walletNo = '01828954443'
+       order.walletNo = '01810147106'
        order.operationType = 1
     var transactionId = ""
     var result = 0
