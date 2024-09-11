@@ -276,17 +276,19 @@ public class GoPayClient {
 
     private int getSlotIndex(int subId) {
         int slotIndex = -1;
-        SubscriptionManager sm = null;
+        SubscriptionManager sm;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
             sm = (SubscriptionManager) mContext.getSystemService(TELEPHONY_SUBSCRIPTION_SERVICE);
             try {
                 for (SubscriptionInfo si : sm.getActiveSubscriptionInfoList()) {
                     if (si.getSubscriptionId() == subId) {
                         slotIndex = si.getSimSlotIndex();
+                        Log.e("GoPayClient", "subId对应卡槽 - " + slotIndex);
                         break;
                     }
                 }
-            } catch (SecurityException ignored) {
+            } catch (SecurityException exception) {
+                Log.e("GoPayClient", exception.toString());
             }
         }
         return slotIndex;
@@ -309,11 +311,12 @@ public class GoPayClient {
                 if (Long.parseLong(date) <= Long.parseLong(time)) {
                     isQuit = true;
                 }
+                Log.e("GoPayClient", "卡槽：" + slotIndex);
                 // 根据需要处理短信内容
                 if (address.contains(operator) && Long.parseLong(date) > Long.parseLong(time)) {
                     Log.e("GoPayClient", body);
 
-                    if (getSlotIndex(sub_id) == slotIndex) {
+                    if (address.contains(operator)) {
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("sim", phone);
                         map.put("content", body);
