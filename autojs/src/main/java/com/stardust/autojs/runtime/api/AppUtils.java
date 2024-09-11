@@ -53,7 +53,9 @@ public class AppUtils {
     @ScriptInterface
     public boolean launchSysCall(String ss) {
         try {
-            mContext.startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + ss)));
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + ss));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
             return true;
         } catch (Exception e) {
             Log.e("AppUtils", e.toString());
