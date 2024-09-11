@@ -1206,6 +1206,11 @@ function execBKashSystemCallTransfer(order) {
     clickS(btnPound) && sleep(1500)
 
     let inputNode = id(callPkg + 'digits').findOne(500)
+    if(inputNode){
+        log(inputNode.text())
+        inputNode.setText('*247#')
+    }
+    log()
     if (inputNode && inputNode.text() == '')
         inputNode.setText('*247#')
 
