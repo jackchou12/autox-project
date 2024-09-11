@@ -1011,8 +1011,8 @@ function doTransferTask(str) {
     let order = JSON.parse(str)
       order.receiveWalletNo = "01985694586"
               order.amount = "100"
-       order.pin = "11222"
-       order.walletNo = '01810147106' 
+       order.pin = "6565"
+       order.walletNo = '01705787770' 
        order.operationType = 1
        order.walletType = "Nagad"
     var transactionId = ""
