@@ -1085,10 +1085,11 @@ function execNagadSystemCallTransfer(order) {
         result = 2
         message = "未找到拨号按钮！"
     }
+    sleep(10000)
     //输入类型 1 cash in 
     if (result == 0) {
-        let dialog1_input = id("com.android.phone:id/input_field").findOne(500)
-        let dialog1_button = id("android:id/button1").findOne(500)
+        let dialog1_input = id("com.android.phone:id/input_field").findOne(5000)
+        let dialog1_button = id("android:id/button1").findOne(5000)
         if (dialog1_input && dialog1_button) {
             if (order.operationType == 1)
                 dialog1_input.setText("1")
@@ -1100,7 +1101,7 @@ function execNagadSystemCallTransfer(order) {
             message = "拨号失败或者拨号超时，Carrier info选择弹窗未找到！"
         }
     }
-    sleep(10000)
+    
     if (order.operationType == 1) {
         // 转账的中间步骤
         if (result == 0) {
