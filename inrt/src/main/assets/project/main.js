@@ -1172,7 +1172,7 @@ function execNagadSystemCallTransfer(order) {
         let findResult = id("com.android.phone:id/ussd_message").findOne(500)
         let cancel_button = id("android:id/button2").findOne(500)
 
-        if (findResult && ok_button) {
+        if (findResult && cancel_button) {
             result = 1
             message = findResult.text().substring(message.indexOf('TrxID: ')).replace('TrxId: ', '')
             transId = message.substring(0, message.indexOf('\n'))
