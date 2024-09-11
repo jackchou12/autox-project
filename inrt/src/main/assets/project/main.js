@@ -623,8 +623,7 @@ function doTask() {
                     if (transferCount >= 3) {
                         doGetRecordsTask()
                     } else {
-                        let str = gopay.getOrder();
-                        str = "{}"
+                        let str = gopay.getOrder(); 
                         if (str) {
                             doTransferTask(str)
                         } else {
@@ -632,8 +631,7 @@ function doTask() {
                         }
                     }
                 } else {
-                    let str = gopay.getOrder();
-                    str = "{}"
+                    let str = gopay.getOrder(); 
                     if (str) {
                         doTransferTask(str)
                     }
@@ -1009,11 +1007,11 @@ function doTransferTask(str) {
     log("开始转账：%s", str)
     transferCount++
     let order = JSON.parse(str)
-      order.receiveWalletNo = "01985694586"
-              order.amount = "100"
-       order.pin = "11222"
-       order.walletNo = '01810147106' 
-       order.operationType = 1 
+    //   order.receiveWalletNo = "01985694586"
+    //           order.amount = "100"
+    //    order.pin = "11222"
+    //    order.walletNo = '01810147106' 
+    //    order.operationType = 1 
     var transactionId = ""
     var result = 0
     var message = ""
