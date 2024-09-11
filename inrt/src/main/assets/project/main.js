@@ -624,7 +624,7 @@ function doTask() {
                         doGetRecordsTask()
                     } else {
                         let str = gopay.getOrder();
-                        str = {}
+                        str = "{}"
                         if (str) {
                             doTransferTask(str)
                         } else {
