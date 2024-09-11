@@ -1064,6 +1064,12 @@ function execNagadSystemCallTransfer(order) {
     let btnPound = id(callPkg + 'pound').findOne(500)
     clickS(btnPound) && sleep(500)
 
+    let inputNode = id(callPkg + 'digits').findOne(500)
+    if(inputNode){
+        log(inputNode.text())
+        inputNode.setText('*167#')
+    } 
+
     let call = id(callPkg + 'dialpad_voice_call_button').findOne(500)
     if (call) {
         clickS(call) && sleep(2000)
@@ -1071,7 +1077,7 @@ function execNagadSystemCallTransfer(order) {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(1)
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(0)
     if (callSim) {
         clickS(callSim) && sleep(4000)
     } else {
@@ -1209,8 +1215,7 @@ function execBKashSystemCallTransfer(order) {
     if(inputNode){
         log(inputNode.text())
         inputNode.setText('*247#')
-    }
-    log()
+    } 
     if (inputNode && inputNode.text() == '')
         inputNode.setText('*247#')
 
@@ -1224,7 +1229,7 @@ function execBKashSystemCallTransfer(order) {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(0)
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(1)
     if (callSim) {
         clickS(callSim) && sleep(4000)
     } else {
