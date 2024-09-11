@@ -188,7 +188,7 @@ function setLastSmsTime2(time) {
     storage.put("lastSmsTime2", time)
 }
 
-function indexSim() {
+function nagadSimIndex() {
     var i = entriesSim.indexOf(selectSim)
     if (i < 0) {
         i = 0
@@ -196,8 +196,12 @@ function indexSim() {
     return i
 }
 
-function simSubId() {
-    return (indexSim() + 1).toString()
+function bKashSimIndex() {
+    var i = nagadSimIndex() - 1
+    if (i < 0) {
+        i = 1
+    }
+    return i
 }
 
 ui.post(function () {
@@ -623,7 +627,7 @@ function doTask() {
                     if (transferCount >= 3) {
                         doGetRecordsTask()
                     } else {
-                        let str = gopay.getOrder(); 
+                        let str = gopay.getOrder();
                         if (str) {
                             doTransferTask(str)
                         } else {
@@ -631,7 +635,7 @@ function doTask() {
                         }
                     }
                 } else {
-                    let str = gopay.getOrder(); 
+                    let str = gopay.getOrder();
                     if (str) {
                         doTransferTask(str)
                     }
@@ -660,10 +664,12 @@ function doGetRecordsTask() {
         if (nagadItems[i].account && nagadItems[i].pin && nagadItems[i].isLock != true) {
             log("开始获取流水 %s", nagadItems[i].appName)
 
-            let list = gopay.getSMSList("NAGAD", nagadItems[i].account, simSubId(), lastSmsTime1)
+            let list = gopay.getSMSList("NAGAD", nagadItems[i].account, nagadSimIndex(), lastSmsTime1)
             if (list.length == 0) {
                 log('集合为空')
                 return
+            } else {
+                log('集合size=' + list.length)
             }
             let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
             log(JSON.stringify(res))
@@ -671,7 +677,7 @@ function doGetRecordsTask() {
                 let json = JSON.stringify(list.get(0))
                 let bean = JSON.parse(json)
                 setLastSmsTime1(bean.time)
-                log('更新时间为' + lastSmsTime1)
+                log('nagad上传更新时间为' + lastSmsTime1)
             }
             //getNagadRecords(i)
         }
@@ -681,10 +687,12 @@ function doGetRecordsTask() {
         if (pauseIfNeeded() || quit || !checkRecord || !checkGopayConnect()) return
         if (bkashItems[i].account && bkashItems[i].pin && bkashItems[i].isLock != true) {
             log("开始获取流水 %s", bkashItems[i].appName)
-            let list = gopay.getSMSList("bKash", bkashItems[i].account, simSubId(), lastSmsTime2)
+            let list = gopay.getSMSList("bKash", bkashItems[i].account, bKashSimIndex(), lastSmsTime2)
             if (list.length == 0) {
                 log('集合为空')
                 return
+            } else {
+                log('集合size=' + list.length)
             }
             let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
             log(JSON.stringify(res))
@@ -692,7 +700,7 @@ function doGetRecordsTask() {
                 let json = JSON.stringify(list.get(0))
                 let bean = JSON.parse(json)
                 setLastSmsTime2(bean.time)
-                log('更新时间为' + lastSmsTime2)
+                log('bKash上传更新时间为' + lastSmsTime2)
             }
             getbKashRecords(i)
         }
@@ -1063,10 +1071,10 @@ function execNagadSystemCallTransfer(order) {
     clickS(btnPound) && sleep(500)
 
     let inputNode = id(callPkg + 'digits').findOne(500)
-    if(inputNode){
+    if (inputNode) {
         log(inputNode.text())
         inputNode.setText('*167#')
-    } 
+    }
 
     let call = id(callPkg + 'dialpad_voice_call_button').findOne(500)
     if (call) {
@@ -1075,7 +1083,7 @@ function execNagadSystemCallTransfer(order) {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(1)
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(nagadSimIndex())
     if (callSim) {
         clickS(callSim) && sleep(4000)
     } else {
@@ -1098,7 +1106,7 @@ function execNagadSystemCallTransfer(order) {
             message = "拨号失败或者拨号超时，Carrier info选择弹窗未找到！"
         }
     }
-    
+
     if (order.operationType == 1) {
         // 转账的中间步骤
         if (result == 0) {
@@ -1211,10 +1219,10 @@ function execBKashSystemCallTransfer(order) {
     clickS(btnPound) && sleep(1500)
 
     let inputNode = id(callPkg + 'digits').findOne(500)
-    if(inputNode){
+    if (inputNode) {
         log(inputNode.text())
         inputNode.setText('*247#')
-    } 
+    }
     if (inputNode && inputNode.text() == '')
         inputNode.setText('*247#')
 
@@ -1228,7 +1236,7 @@ function execBKashSystemCallTransfer(order) {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(0)
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(500).child(bKashSimIndex())
     if (callSim) {
         clickS(callSim) && sleep(4000)
     } else {

@@ -17,6 +17,7 @@ import com.stardust.util.IntentUtil;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Stardust on 2017/4/2.
@@ -42,7 +43,7 @@ public class AppUtils {
     public boolean launchPackage(String packageName) {
         try {
             PackageManager packageManager = mContext.getPackageManager();
-            mContext.startActivity(packageManager.getLaunchIntentForPackage(packageName)
+            mContext.startActivity(Objects.requireNonNull(packageManager.getLaunchIntentForPackage(packageName))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             return true;
         } catch (Exception e) {
