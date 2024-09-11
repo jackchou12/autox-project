@@ -1009,10 +1009,11 @@ function doTransferTask(str) {
     log("开始转账：%s", str)
     transferCount++
     let order = JSON.parse(str)
-      order.receiveWalletNo = "01810147106"
+      order.receiveWalletNo = "01705787770"
               order.amount = "100"
-       order.pin = "11222"
-       order.walletNo = '01810147106'
+       order.pin = "6565"
+       order.walletNo = '01705787770'
+       order.walletType = 'Nagad'
        order.operationType = 1
     var transactionId = ""
     var result = 0
