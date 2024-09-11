@@ -633,6 +633,7 @@ function doTask() {
                     }
                 } else {
                     let str = gopay.getOrder();
+                    str = "{}"
                     if (str) {
                         doTransferTask(str)
                     }
