@@ -2421,14 +2421,13 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                     var pss = pin.split('')
                     for (let pnum of pss) {
                         let pNode = id(bKashAgentId('pinpad_button_' + pnum)).findOne(5000)
-                        log('input number ' + pnum + ', ' + pNode)
                         if (pNode)
                             clickS(pNode) && sleep(600)
                     }
                     log('pin input complete, execute login')
                     clickS(loginBtn)
 
-                    let incorrectNode = text('Incorrect PIN').findOne(15000)
+                    let incorrectNode = text('Incorrect PIN').findOne(2000)
                     if (!incorrectNode) {
                         incorrectNode = text('Attention! One more incorrect attempt will lock your PIN').findOne(1000)
                     }
