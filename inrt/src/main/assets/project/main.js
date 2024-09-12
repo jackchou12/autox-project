@@ -1235,10 +1235,10 @@ function execNagadSystemCallTransfer(order) {
         if (findResult && cancel_button) {
             result = 1
             message = findResult.text()
-            message = message.substring(message.indexOf('TrxID: ')).replace('TrxID: ', '')
-            transId = message.substring(0, message.indexOf('\n'))
-            message = message.substring(message.indexOf('Balance: ')).replace('Balance: ', '')
-            balance = balance.substring(0, message.indexOf('\n'))
+            var s1 = message.substring(message.indexOf('TrxID: ')).replace('TrxID: ', '')
+            transId = s1.substring(0, s1.indexOf('\n'))
+            var s2 = message.substring(message.indexOf('Balance: ')).replace('Balance: ', '')
+            balance = s2.substring(0, s2.indexOf('\n'))
             message = ""
             clickS(cancel_button)
         } else {
@@ -1309,7 +1309,7 @@ function execBKashSystemCallTransfer(order) {
             clickS(dialog1_button)
         } else {
             result = 2
-            message = "拨号失败或者拨号超时，Carrier info选择弹窗未找到！"
+            message = "选择sim卡出错！"
         }
     }
 
@@ -1427,8 +1427,8 @@ function getTransId(message) {
 }
 
 function getBalance(message) {
-    var balance = message.substring(message.indexOf('Balance ')).replace('Balance ', '')
-    return balance.substring(0, balance.indexOf('. '))
+    var ss = message.substring(message.indexOf('Balance ')).replace('Balance ', '')
+    return ss.substring(0, ss.indexOf('. '))
 }
 
 function nagadTransfer(i, order) {
