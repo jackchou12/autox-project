@@ -2358,7 +2358,7 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
             }
         }
         let startTime = +new Date()
-        let balanceTxt = text('Tap for Balance').findOne(1000)
+        let balanceTxt = text('Tap for Balance').findOne(5000)
         while (!balanceTxt) {
             if (+new Date() - startTime >= 60 * 1000) {
                 isIndex = false
@@ -2368,13 +2368,13 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
 
             let btnEnglish = text('English').findOne(5000)
             if (btnEnglish) {
-                clickS(btnEnglish) && sleep(600)
+                clickS(btnEnglish)
             }
 
-            var tvCodeTitle = text('Enter Mobile Number').findOne(1000)
+            var tvCodeTitle = text('Enter Mobile Number').findOne(5000)
             if (tvCodeTitle) {
                 // 验证码登录 
-                let etAccount = id(bKashAgentId('etEntryAccountNumber')).findOne(2000)
+                let etAccount = id(bKashAgentId('etEntryAccountNumber')).findOne(5000)
                 let btnNext = text('Next').findOne(1000)
                 if (etAccount && btnNext) {
                     log('输入手机号, 并执行下一步')
@@ -2402,12 +2402,12 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                 sleep(4000)
             }
 
-            let tvLoginTitle = text('Login').findOne(1000)
-            let loginBtn = text('Log in').findOne(2000)
+            let tvLoginTitle = text('Login').findOne(5000)
+            let loginBtn = text('Log in').findOne(1000)
             log("loginBtn : %s", loginBtn)
             if (tvLoginTitle && loginBtn) {
                 log('pin码登录')
-                let mobileNode = id(bKashAgentId('tvEntryAccountNumber')).findOne(600)
+                let mobileNode = id(bKashAgentId('tvEntryAccountNumber')).findOne(1000)
                 log("mobileNode : %s", mobileNode.text())
 
                 if (mobileNode) {
@@ -2420,13 +2420,13 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
                     log('账号一致，下一步输入pin')
                     var pss = pin.split('')
                     for (let pnum of pss) {
-                        let pNode = id(bKashAgentId('pinpad_button_' + pnum)).findOne(600)
+                        let pNode = id(bKashAgentId('pinpad_button_' + pnum)).findOne(5000)
                         clickS(pNode) && sleep(600)
                     }
                     log('pin input complete, execute login')
-                    clickS(loginBtn) && sleep(5000)
+                    clickS(loginBtn)
 
-                    let incorrectNode = text('Incorrect PIN').findOne(1000)
+                    let incorrectNode = text('Incorrect PIN').findOne(15000)
                     if (!incorrectNode) {
                         incorrectNode = text('Attention! One more incorrect attempt will lock your PIN').findOne(1000)
                     }
