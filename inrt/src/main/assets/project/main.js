@@ -661,7 +661,7 @@ function doGetSmsTask() {
     }
 
     for (var i = 0; i < nagadItems.length; i++) {
-        if (pauseIfNeeded() || quit || !checkRecord || !checkGopayConnect()) return
+        if (pauseIfNeeded() || quit || !checkGopayConnect()) return
         if (nagadItems[i].account && nagadItems[i].pin && nagadItems[i].isLock != true) {
             log("开始获取短信 %s", nagadItems[i].appName)
             //getNagadRecords(i)
@@ -684,7 +684,7 @@ function doGetSmsTask() {
     }
 
     for (var i = 0; i < bkashItems.length; i++) {
-        if (pauseIfNeeded() || quit || !checkRecord || !checkGopayConnect()) return
+        if (pauseIfNeeded() || quit || !checkGopayConnect()) return
         if (bkashItems[i].account && bkashItems[i].pin && bkashItems[i].isLock != true) {
             log("开始获取短信 %s", bkashItems[i].appName)
             let list = gopay.getSMSList("bKash", bkashItems[i].account, bKashSimIndex(), lastSmsTime2)
