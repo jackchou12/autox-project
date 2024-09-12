@@ -701,7 +701,6 @@ function doGetSmsTask() {
             } else {
                 log('集合为空')
             }
-            getbKashRecords(i)
         }
     }
 
