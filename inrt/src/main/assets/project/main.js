@@ -1325,8 +1325,8 @@ function execBKashSystemCallTransfer(order) {
     }
 
     if (result == 0 && order.operationType == 1) {
-        let findResult = className('android.widget.TextView').visibleToUser(true).find(15000)
-        let ok_button = id("android:id/button1").findOne(1000)
+        let ok_button = id("android:id/button1").findOne(15000)
+        let findResult = className('android.widget.TextView').visibleToUser(true).find()
 
         if (findResult && ok_button) {
             if (findResult.length > 1) {
