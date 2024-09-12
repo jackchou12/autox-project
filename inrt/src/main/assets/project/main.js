@@ -697,10 +697,10 @@ function doGetRecordsTask() {
                     setLastSmsTime2(bean.time)
                     log('bKash上传更新时间为' + lastSmsTime2)
                 }
-                getbKashRecords(i)
             } else {
                 log('集合为空')
             }
+            getbKashRecords(i)
         }
     }
 
