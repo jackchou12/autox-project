@@ -1100,7 +1100,7 @@ function execNagadSystemCallTransfer(order) {
             clickS(dialog1_button)
         } else {
             result = 2
-            message = "拨号失败或者拨号超时，Carrier info选择弹窗未找到！"
+            message = "选择sim卡出错！"
         }
     }
 
@@ -1126,7 +1126,7 @@ function execNagadSystemCallTransfer(order) {
                 clickS(dialog3_button)
             } else {
                 result == 2
-                message = "输入转入金额出错！"
+                message = "输入金额出错！"
             }
         }
     } else {
