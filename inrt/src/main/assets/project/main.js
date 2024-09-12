@@ -1014,8 +1014,8 @@ function doTransferTask(str) {
     log("开始转账：%s", str)
     transferCount++
     let order = JSON.parse(str)
-    //   order.receiveWalletNo = "01985694586"
-    //           order.amount = "100"
+    //    order.receiveWalletNo = "01985694586"
+    //    order.amount = "100"
     //    order.pin = "11222"
     //    order.walletNo = '01810147106' 
     //    order.operationType = 1 
