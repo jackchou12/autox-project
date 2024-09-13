@@ -39,7 +39,7 @@ ui.layout(
                 <card w="*" h="auto" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" gravity="center_vertical">
                     <vertical padding="18 8" h="auto">
                         <linear>
-                            <text margin="12 0" text="Nagad对应Sim卡" textColor="#222222" w="auto" />
+                            <text margin="12 0" text="Nagad Sim slot" textColor="#222222" w="auto" />
                             <Spinner margin="12 0" id="selectSim" />
                         </linear>
                     </vertical>
@@ -49,7 +49,7 @@ ui.layout(
                 <card w="*" h="auto" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" gravity="center_vertical">
                     <vertical padding="18 8" h="auto">
                         <linear>
-                            <text margin="12 0" text="bKash选择运营商" textColor="#222222" w="auto" />
+                            <text margin="12 0" text="bKash operator" textColor="#222222" w="auto" />
                             <Spinner margin="12 0" id="selectOpt" />
                         </linear>
                     </vertical>
@@ -59,8 +59,8 @@ ui.layout(
                 <card w="*" h="auto" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" gravity="center_vertical">
                     <vertical padding="8 0" h="auto">
                         <linear>
-                            <Button layout_weight="1" id="console" text="打开日志" style="Widget.AppCompat.Button.Colored" />
-                            <Button layout_weight="1" id="start" text="开始任务" style="Widget.AppCompat.Button.Colored" />
+                            <Button layout_weight="1" id="console" text="Open Log" style="Widget.AppCompat.Button.Colored" />
+                            <Button layout_weight="1" id="start" text="Start" style="Widget.AppCompat.Button.Colored" />
                         </linear>
                     </vertical>
                     <View bg="#36a4a1" h="*" w="5" />
@@ -72,8 +72,8 @@ ui.layout(
                         <vertical id="nagadContainer"></vertical>
 
                         <linear>
-                            <button id="editNagad" text="开始编辑" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
-                            <button id="saveNagad" text="保存" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
+                            <button id="editNagad" text="Edit" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
+                            <button id="saveNagad" text="Save" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
                         </linear>
                     </vertical>
                     <View bg="#36a4a1" h="*" w="5" />
@@ -85,28 +85,27 @@ ui.layout(
                         <vertical id="bkashContainer"></vertical>
 
                         <linear>
-                            <button id="editbKash" text="开始编辑" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
-                            <button id="savebKash" text="保存" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
-                            <button id="addbKash" text="新增" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
+                            <button id="editbKash" text="Edit" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
+                            <button id="savebKash" text="Save" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
                         </linear>
 
                         <vertical id="addbKashPanel" padding="18 8" marginBottom="2" h="auto" visibility="gone">
                             <horizontal>
-                                <text text="应用名：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                                <text text="App name：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                                 <input id="name" inputType="text" text="" w="*" color="#666666" />
                             </horizontal>
                             <horizontal>
-                                <text text="账号：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                                <text text="account：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                                 <input id="account" inputType="number" text="" w="*" color="#666666" />
                             </horizontal>
                             <horizontal>
-                                <text text="pin码：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                                <text text="pin：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                                 <input id="pin" inputType="number" text="" w="*" color="#666666" />
                             </horizontal>
 
                             <linear>
-                                <button id="cancel" text="取消" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
-                                <button id="confirm" text="确定" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
+                                <button id="cancel" text="Cancel" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
+                                <button id="confirm" text="Confirm" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
                             </linear>
                         </vertical>
                     </vertical>
@@ -212,7 +211,6 @@ ui.post(function () {
         onItemSelected: function (parent, view, position, id) {
             var option = parent.getItemAtPosition(position)
             // 处理选中项
-            console.log("选中的项: " + option);
             storage.put("selectSim", option)
             selectSim = option
         },
@@ -247,7 +245,6 @@ ui.post(function () {
         onItemSelected: function (parent, view, position, id) {
             var option = parent.getItemAtPosition(position)
             // 处理选中项
-            console.log("选中的项: " + option);
             storage.put("selectOption", option)
             selectOption = option
         },
@@ -271,11 +268,11 @@ const VISIBLE = 0
 const INVISIBLE = 4
 const GONE = 8
 ui.editNagad.click(function () {
-    switchNagadEdit(!(ui.editNagad.text() != "开始编辑"))
+    switchNagadEdit(!(ui.editNagad.text() != "Edit"))
 })
 
 function switchNagadEdit(isEdit) {
-    ui.editNagad.setText(isEdit ? "结束编辑" : "开始编辑")
+    ui.editNagad.setText(isEdit ? "Finish" : "Edit")
     for (let i = 0; i < nagadItems.length; i++) {
         ui.nagadContainer.getChildAt(i).account.setVisibility(isEdit ? VISIBLE : GONE)
         if (!isEdit && i == 0) {
@@ -302,11 +299,11 @@ ui.saveNagad.click(function () {
 })
 
 ui.editbKash.click(function () {
-    switchbKashEdit(!(ui.editbKash.text() != "开始编辑"))
+    switchbKashEdit(!(ui.editbKash.text() != "Edit"))
 })
 
 function switchbKashEdit(isEdit) {
-    ui.editbKash.setText(isEdit ? "结束编辑" : "开始编辑")
+    ui.editbKash.setText(isEdit ? "Finish" : "Edit")
     for (let i = 0; i < bkashItems.length; i++) {
         ui.bkashContainer.getChildAt(i).account.setVisibility(isEdit ? VISIBLE : GONE)
         if (!isEdit && i == 0) {
@@ -314,7 +311,7 @@ function switchbKashEdit(isEdit) {
         }
         ui.bkashContainer.getChildAt(i).accountTxt.setVisibility(isEdit ? GONE : VISIBLE)
         ui.bkashContainer.getChildAt(i).pin.setVisibility(isEdit ? VISIBLE : GONE)
-        ui.bkashContainer.getChildAt(i).pinTxt.setVisibility(isEdit ? GONE : VISIBLE)
+//        ui.bkashContainer.getChildAt(i).pinTxt.setVisibility(isEdit ? GONE : VISIBLE)
     }
 }
 
@@ -332,12 +329,12 @@ ui.savebKash.click(function () {
     toast('bKash信息已保存!')
 })
 
-ui.addbKash.click(function () {
-    ui.addbKashPanel.name.setText("")
-    ui.addbKashPanel.account.setText("")
-    ui.addbKashPanel.pin.setText("")
-    ui.addbKashPanel.setVisibility(VISIBLE)
-})
+//ui.addbKash.click(function () {
+//    ui.addbKashPanel.name.setText("")
+//    ui.addbKashPanel.account.setText("")
+//    ui.addbKashPanel.pin.setText("")
+//    ui.addbKashPanel.setVisibility(VISIBLE)
+//})
 
 ui.addbKashPanel.cancel.click(function () {
     ui.addbKashPanel.account.hideInput()
@@ -373,10 +370,10 @@ ui.start.click(function () {
 
     if (isTaskRunning) {
         isTaskPausing = true
-        ui.start.setText("任务暂停中...")
+        ui.start.setText("stopping wait continue")
     } else {
         isTaskRunning = true
-        ui.start.setText(isGoPayConnected ? "停止任务" : "连接中断，暂停中")
+        ui.start.setText(isGoPayConnected ? "Stop" : "disconnect and pausing")
     }
 })
 
@@ -421,15 +418,15 @@ nagadItems.forEach(p => {
         <vertical padding="18 8" marginBottom="2" h="auto">
             <horizontal>
                 <text id="name" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
-                <checkbox id="lock" text="禁用" marginLeft="4" marginRight="6" />
+                <checkbox id="lock" text="Disable" marginLeft="4" marginRight="6" />
             </horizontal>
             <horizontal>
-                <text text="账号：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                <text text="Account：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                 <text id="accountTxt" text="" w="*" color="#666666" />
                 <input id="account" inputType="number" text="" w="*" color="#666666" visibility="gone" />
             </horizontal>
             <horizontal>
-                <text text="pin码：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                <text text="pin：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                 <text id="pinTxt" text="" w="*" color="#666666" />
                 <input id="pin" inputType="number" text="" w="*" color="#666666" visibility="gone" />
             </horizontal>
@@ -453,15 +450,15 @@ function addbKashItemView(p) {
         <vertical padding="18 8" marginBottom="2" h="auto">
             <horizontal>
                 <text id="name" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
-                <checkbox id="lock" text="禁用" marginLeft="4" marginRight="6" />
+                <checkbox id="lock" text="Disable" marginLeft="4" marginRight="6" />
             </horizontal>
             <horizontal>
-                <text text="账号：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                <text text="Account：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                 <text id="accountTxt" text="" w="*" color="#666666" />
                 <input id="account" inputType="number" text="" w="*" color="#666666" visibility="gone" />
             </horizontal>
             <horizontal>
-                <text text="pin码：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                <text text="pin：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                 <text id="pinTxt" text="" w="*" color="#666666" />
                 <input id="pin" inputType="number" text="" w="*" color="#666666" visibility="gone" />
             </horizontal>
@@ -569,8 +566,8 @@ function pauseIfNeeded() {
         ui.run(function () {
             isTaskRunning = false
             isTaskPausing = false
-            ui.start.setText("开始任务")
-            toast("任务已暂停")
+            ui.start.setText("Start")
+            toast("Scrip has stop")
         })
         return true
     }
@@ -604,8 +601,8 @@ function checkGopayConnect() {
         if (isTaskRunning) {
             ui.run(function () {
                 if (isTaskRunning) {
-                    ui.start.setText(isConnected ? "停止任务" : "连接中断，暂停中")
-                    toast(isConnected ? "已连接，继续执行" : "连接中断，暂停执行")
+                    ui.start.setText(isConnected ? "Stop" : "Disconnect and pausing")
+                    toast(isConnected ? "Connect continue execute" : "Disconnect and stop execute")
                 }
             })
         }
