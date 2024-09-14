@@ -37,26 +37,6 @@ ui.layout(
                     <View bg="#36a4a1" h="*" w="5" />
                 </card>
                 <card w="*" h="auto" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" gravity="center_vertical">
-                    <vertical padding="18 8" h="auto">
-                        <linear>
-                            <text margin="12 0" text="Nagad Sim slot" textColor="#222222" w="auto" />
-                            <Spinner margin="12 0" id="selectSim" />
-                        </linear>
-                    </vertical>
-                    <View bg="#36a4a1" h="*" w="5" />
-                </card>
-
-                <card w="*" h="auto" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" gravity="center_vertical">
-                    <vertical padding="18 8" h="auto">
-                        <linear>
-                            <text margin="12 0" text="bKash operator" textColor="#222222" w="auto" />
-                            <Spinner margin="12 0" id="selectOpt" />
-                        </linear>
-                    </vertical>
-                    <View bg="#36a4a1" h="*" w="5" />
-                </card>
-
-                <card w="*" h="auto" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" gravity="center_vertical">
                     <vertical padding="8 0" h="auto">
                         <linear>
                             <Button layout_weight="1" id="console" text="Open Log" style="Widget.AppCompat.Button.Colored" />
@@ -102,7 +82,6 @@ ui.layout(
                                 <text text="pin：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                                 <input id="pin" inputType="number" text="" w="*" color="#666666" />
                             </horizontal>
-
                             <linear>
                                 <button id="cancel" text="Cancel" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
                                 <button id="confirm" text="Confirm" layout_weight="1" style="Widget.AppCompat.Button.Colored" />
@@ -173,7 +152,6 @@ ui.checkRecord.on("check", function (checked) {
 })
 
 var entriesSim = ["Sim 1", "Sim 2"]
-var selectSim = storage.get("selectSim", "")
 var lastSmsTime1 = storage.get("lastSmsTime1", "0")
 var lastSmsTime2 = storage.get("lastSmsTime2", "0")
 
@@ -187,78 +165,22 @@ function setLastSmsTime2(time) {
     storage.put("lastSmsTime2", time)
 }
 
-function nagadSimIndex() {
-    var i = entriesSim.indexOf(selectSim)
+function simIndex(simTxt) {
+    var i = entriesSim.indexOf(simTxt)
     if (i < 0) {
         i = 0
     }
     return i
 }
-
-function bKashSimIndex() {
-    var i = nagadSimIndex() - 1
-    if (i < 0) {
-        i = 1
-    }
-    return i
-}
-
-ui.post(function () {
-    let adapter = new android.widget.ArrayAdapter(context, android.R.layout.simple_spinner_item, entriesSim)
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    ui.selectSim.setAdapter(adapter);
-    ui.selectSim.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener({
-        onItemSelected: function (parent, view, position, id) {
-            var option = parent.getItemAtPosition(position)
-            // 处理选中项
-            storage.put("selectSim", option)
-            selectSim = option
-        },
-        onNothingSelected: function (parent) {
-            // 处理未选中项
-        }
-    }));
-    var i = entriesSim.indexOf(selectSim)
-    if (i < 0) {
-        i = 0
-    }
-    ui.selectSim.setSelection(i)
-})
-
 
 var entries = ["Airtel", "Bangla link", "Graminphone", "RobiAirtel", "Telitalk"]
-var selectOption = storage.get("selectOption", "")
-
-function indexOpertor() {
-    var i = entries.indexOf(selectOption)
+function indexOpertor(opt) {
+    var i = entries.indexOf(opt)
     if (i < 0) {
         i = 0
     }
     return i
 }
-
-ui.post(function () {
-    let adapter = new android.widget.ArrayAdapter(context, android.R.layout.simple_spinner_item, entries)
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    ui.selectOpt.setAdapter(adapter);
-    ui.selectOpt.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener({
-        onItemSelected: function (parent, view, position, id) {
-            var option = parent.getItemAtPosition(position)
-            // 处理选中项
-            storage.put("selectOption", option)
-            selectOption = option
-        },
-        onNothingSelected: function (parent) {
-            // 处理未选中项
-        }
-    }));
-    var i = entries.indexOf(selectOption)
-    if (i < 0) {
-        i = 0
-    }
-    ui.selectOpt.setSelection(i)
-})
-
 
 ui.console.click(function () {
     app.startActivity("console")
@@ -274,6 +196,8 @@ ui.editNagad.click(function () {
 function switchNagadEdit(isEdit) {
     ui.editNagad.setText(isEdit ? "Finish" : "Edit")
     for (let i = 0; i < nagadItems.length; i++) {
+        ui.nagadContainer.getChildAt(i).nagadSimTxt.setVisibility(isEdit ? GONE : VISIBLE)
+        ui.nagadContainer.getChildAt(i).nagadSimSpinner.setVisibility(isEdit ? VISIBLE : GONE)
         ui.nagadContainer.getChildAt(i).account.setVisibility(isEdit ? VISIBLE : GONE)
         if (!isEdit && i == 0) {
             ui.nagadContainer.getChildAt(i).account.hideInput()
@@ -288,6 +212,7 @@ ui.saveNagad.click(function () {
     for (let i = 0; i < nagadItems.length; i++) {
         nagadItems[i].isLock = ui.nagadContainer.getChildAt(i).lock.checked
         nagadItems[i].launchFailCount = 0
+        nagadItems[i].simTxt = ui.nagadContainer.getChildAt(i).nagadSimTxt.text()
         nagadItems[i].account = ui.nagadContainer.getChildAt(i).account.text()
         ui.nagadContainer.getChildAt(i).accountTxt.setText(nagadItems[i].account)
         nagadItems[i].pin = ui.nagadContainer.getChildAt(i).pin.text()
@@ -295,7 +220,7 @@ ui.saveNagad.click(function () {
     }
     switchNagadEdit(false)
     storage.put("nagadItems", nagadItems)
-    toast('Nagad信息已保存!')
+    toast('Nagad Info saved!')
 })
 
 ui.editbKash.click(function () {
@@ -305,13 +230,17 @@ ui.editbKash.click(function () {
 function switchbKashEdit(isEdit) {
     ui.editbKash.setText(isEdit ? "Finish" : "Edit")
     for (let i = 0; i < bkashItems.length; i++) {
+        ui.bkashContainer.getChildAt(i).bKashSimTxt.setVisibility(isEdit ? GONE : VISIBLE)
+        ui.bkashContainer.getChildAt(i).bKashSimSpinner.setVisibility(isEdit ? VISIBLE : GONE)
+        ui.bkashContainer.getChildAt(i).bKashOptTxt.setVisibility(isEdit ? GONE : VISIBLE)
+        ui.bkashContainer.getChildAt(i).bKashOptSpinner.setVisibility(isEdit ? VISIBLE : GONE)
         ui.bkashContainer.getChildAt(i).account.setVisibility(isEdit ? VISIBLE : GONE)
         if (!isEdit && i == 0) {
             ui.bkashContainer.getChildAt(i).account.hideInput()
         }
         ui.bkashContainer.getChildAt(i).accountTxt.setVisibility(isEdit ? GONE : VISIBLE)
         ui.bkashContainer.getChildAt(i).pin.setVisibility(isEdit ? VISIBLE : GONE)
-//        ui.bkashContainer.getChildAt(i).pinTxt.setVisibility(isEdit ? GONE : VISIBLE)
+        ui.bkashContainer.getChildAt(i).pinTxt.setVisibility(isEdit ? GONE : VISIBLE)
     }
 }
 
@@ -319,6 +248,8 @@ ui.savebKash.click(function () {
     for (let i = 0; i < bkashItems.length; i++) {
         bkashItems[i].isLock = ui.bkashContainer.getChildAt(i).lock.checked
         bkashItems[i].launchFailCount = 0
+        bkashItems[i].simTxt = ui.bkashContainer.getChildAt(i).bKashSimTxt.text()
+        bkashItems[i].optTxt = ui.bkashContainer.getChildAt(i).bKashOptTxt.text()
         bkashItems[i].account = ui.bkashContainer.getChildAt(i).account.text()
         ui.bkashContainer.getChildAt(i).accountTxt.setText(bkashItems[i].account)
         bkashItems[i].pin = ui.bkashContainer.getChildAt(i).pin.text()
@@ -412,6 +343,26 @@ function getPkgItems(name) {
     return items
 }
 
+function setSpinner(sp, entries, selectOption, call) {
+    let adapter = new android.widget.ArrayAdapter(context, android.R.layout.simple_spinner_item, entries)
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    sp.setAdapter(adapter);
+    sp.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener({
+        onItemSelected: function (parent, view, position, id) {
+            var option = parent.getItemAtPosition(position)
+            call(option)
+        },
+        onNothingSelected: function (parent) {
+            // 处理未选中项
+        }
+    }));
+    var i = entries.indexOf(selectOption)
+    if (i < 0) {
+        i = 0
+    }
+    sp.setSelection(i)
+}
+
 var nagadItems = storage.get("nagadItems", getPkgItems("Nagad"))
 nagadItems.forEach(p => {
     let itemView = ui.inflate(
@@ -419,6 +370,11 @@ nagadItems.forEach(p => {
             <horizontal>
                 <text id="name" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                 <checkbox id="lock" text="Disable" marginLeft="4" marginRight="6" />
+            </horizontal>
+            <horizontal>
+                <text text="Sim slot" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                <text id="nagadSimTxt" text="" w="*" color="#666666" />
+                <Spinner margin="12 0" id="nagadSimSpinner" visibility="gone" />
             </horizontal>
             <horizontal>
                 <text text="Account：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
@@ -434,6 +390,11 @@ nagadItems.forEach(p => {
         , ui.nagadContainer)
     itemView.name.setText(p.appName)
     itemView.lock.checked = p.isLock == true
+    itemView.nagadSimTxt.setText(p.simTxt)
+    setSpinner(itemView.nagadSimSpinner, entriesSim, p.simTxt, (option) => {
+        itemView.nagadSimTxt.setText(option)
+        p.simTxt = option
+    })
     itemView.account.setText(p.account)
     itemView.accountTxt.setText(p.account)
     itemView.pin.setText(p.pin)
@@ -453,6 +414,16 @@ function addbKashItemView(p) {
                 <checkbox id="lock" text="Disable" marginLeft="4" marginRight="6" />
             </horizontal>
             <horizontal>
+                <text text="Sim slot" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
+                <text id="bKashSimTxt" text="" w="*" color="#666666" />
+                <Spinner margin="12 0" id="bKashSimSpinner" visibility="gone" />
+            </horizontal>
+            <horizontal>
+                <text text="Operator" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10"  />
+                <text id="bKashOptTxt" text="" w="*" color="#666666" />
+                <Spinner margin="12 0" id="bKashOptSpinner" visibility="gone" />
+            </horizontal>
+            <horizontal>
                 <text text="Account：" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                 <text id="accountTxt" text="" w="*" color="#666666" />
                 <input id="account" inputType="number" text="" w="*" color="#666666" visibility="gone" />
@@ -466,6 +437,16 @@ function addbKashItemView(p) {
         , ui.bkashContainer)
     itemView.name.setText(p.appName)
     itemView.lock.checked = p.isLock == true
+    itemView.bKashSimTxt.setText(p.simTxt)
+    setSpinner(itemView.bKashSimSpinner, entriesSim, p.simTxt, (option) => {
+        itemView.bKashSimTxt.setText(option)
+        p.simTxt = option
+    })
+    itemView.bKashOptTxt.setText(p.optTxt)
+    setSpinner(itemView.bKashOptSpinner, entries, p.optTxt, (option) => {
+        itemView.bKashOptTxt.setText(option)
+        p.optTxt = option
+    })
     itemView.account.setText(p.account)
     itemView.accountTxt.setText(p.account)
     itemView.pin.setText(p.pin)
@@ -549,8 +530,13 @@ log("脚本开始")
 function sendConfigs(configs) {
     threads.start(function () {
         log("上传脚本配置")
-        var res = http.postJson("https://api.go-pay.live/api/walletConfig/check", configs)
-        log("上传脚本配置 : 返回 " + res.statusCode)
+        http.postJson("https://api.go-pay.live/api/walletConfig/check", configs, {}, (res, ex) => {
+            if (res && res.statusCode == 200) {
+                log("上传脚本配置 : 返回 " + res.statusCode)
+            } else {
+                log("上传脚本配置 : 错误 " + ex)
+            }
+        })
     })
 }
 
@@ -663,17 +649,22 @@ function doGetSmsTask() {
             log("开始获取短信 %s", nagadItems[i].appName)
             //getNagadRecords(i)
 
-            let list = gopay.getSMSList("NAGAD", nagadItems[i].account, nagadSimIndex(), lastSmsTime1)
+            let list = gopay.getSMSList("NAGAD", nagadItems[i].account, simIndex(nagadItems[i].simTxt), lastSmsTime1)
             if (list.length != 0) {
                 log('集合size=' + list.length)
-                let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
-                log(JSON.stringify(res))
-                if (res.statusCode == 200) {
-                    let json = JSON.stringify(list.get(0))
-                    let bean = JSON.parse(json)
-                    setLastSmsTime1(bean.time)
-                    log('nagad上传更新时间为' + lastSmsTime1)
-                }
+                http.postJson("https://api.go-pay.live/api/sms/batchUpload", list, {}, (res, ex) => {
+                    if (res && res.statusCode == 200) {
+                        // log(JSON.stringify(res))
+
+                        let json = JSON.stringify(list.get(0))
+                        let bean = JSON.parse(json)
+                        setLastSmsTime1(bean.time)
+                        log('nagad上传成功，更新时间为' + lastSmsTime1)
+                    } else {
+                        log('nagad上传报错，' + ex)
+                    }
+                })
+
             } else {
                 log('nagad集合为空')
             }
@@ -684,17 +675,20 @@ function doGetSmsTask() {
         if (pauseIfNeeded() || quit || !checkGopayConnect()) return
         if (bkashItems[i].account && bkashItems[i].pin && bkashItems[i].isLock != true) {
             log("开始获取短信 %s", bkashItems[i].appName)
-            let list = gopay.getSMSList("bKash", bkashItems[i].account, bKashSimIndex(), lastSmsTime2)
+            let list = gopay.getSMSList("bKash", bkashItems[i].account, simIndex(bkashItems[i].simTxt), lastSmsTime2)
             if (list.length != 0) {
                 log('集合size=' + list.length)
-                let res = http.postJson("https://api.go-pay.live/api/sms/batchUpload", list)
-                log(JSON.stringify(res))
-                if (res.statusCode == 200) {
-                    let json = JSON.stringify(list.get(0))
-                    let bean = JSON.parse(json)
-                    setLastSmsTime2(bean.time)
-                    log('bKash上传更新时间为' + lastSmsTime2)
-                }
+                http.postJson("https://api.go-pay.live/api/sms/batchUpload", list, {}, (res, ex) => {
+                    if (res && res.statusCode == 200) {
+                        // log(JSON.stringify(res))
+                        let json = JSON.stringify(list.get(0))
+                        let bean = JSON.parse(json)
+                        setLastSmsTime2(bean.time)
+                        log('bKash上传成功，更新时间为' + lastSmsTime2)
+                    } else {
+                        log('bKash上传报错，' + ex)
+                    }
+                })
             } else {
                 log('集合为空')
             }
@@ -944,7 +938,7 @@ function getbKashRecords(i) {
     log("开始获取流水 %s %s: %s, %s", bkashItems[i].appName, receiveAccount, pkg, lastId)
     var records = []
 
-    if (bkashHome(pkg, receiveAccount, pin, bkashItems[i].appName, bkashItems[i].isClone)) {
+    if (bkashHome(pkg, receiveAccount, pin, bkashItems[i].appName, bkashItems[i].optTxt, bkashItems[i].isClone)) {
         log('enter bKashAgentHome')
 
         let tranNode = text("Statements").findOne(600)
@@ -1050,17 +1044,21 @@ function bkashReset() {
 function sendRecords(i, walletType, records) {
     threads.start(function () {
         //在新线程执行的代码
-        var res = http.postJson("https://api.go-pay.live/api/transaction/batchUpload", records)
-        log(JSON.stringify(res))
-        if (res.statusCode == 200) {
-            if (walletType == "Nagad") {
-                nagadItems[i].lastId = newLastId
-                storage.put("nagadItems", nagadItems)
+        http.postJson("https://api.go-pay.live/api/transaction/batchUpload", records, {}, (res, ex) => {
+            if (res && res.statusCode == 200) {
+                log(JSON.stringify(res))
+
+                if (walletType == "Nagad") {
+                    nagadItems[i].lastId = newLastId
+                    storage.put("nagadItems", nagadItems)
+                } else {
+                    bkashItems[i].lastId = records[0].transactionId
+                    storage.put("bkashItems", bkashItems)
+                }
             } else {
-                bkashItems[i].lastId = records[0].transactionId
-                storage.put("bkashItems", bkashItems)
+                log('流水上报错误，' + ex)
             }
-        }
+        })
     })
 }
 
@@ -1083,7 +1081,7 @@ function doTransferTask(str) {
             for (var i = 0; i < nagadItems.length; i++) {
                 log("开始转账 %s", nagadItems[i].appName)
                 if (nagadItems[i].account == order.walletNo && nagadItems[i].isLock != true) {
-                    execNagadSystemCallTransfer(order)
+                    execNagadSystemCallTransfer(order, nagadItems[i].simTxt)
                     return
                 }
             }
@@ -1091,7 +1089,7 @@ function doTransferTask(str) {
             for (var i = 0; i < bkashItems.length; i++) {
                 log("开始转账 %s", bkashItems[i].appName)
                 if (bkashItems[i].account == order.walletNo && bkashItems[i].isLock != true) {
-                    execBKashSystemCallTransfer(order)
+                    execBKashSystemCallTransfer(order, bkashItems[i].simTxt)
                     return
                 }
             }
@@ -1105,7 +1103,7 @@ function doTransferTask(str) {
     log("转账结束: %s, operationType = %d, result = %d, transactionId = %s, message = %s, balance=%s", order.orderId, order.operationType, result, transactionId, message, balance)
 }
 
-function execNagadSystemCallTransfer(order) {
+function execNagadSystemCallTransfer(order, simTxt) {
     closeTips()
     // 转账和查询余额 才继续执行
     if (order.operationType != 1 && order.operationType != 3) {
@@ -1135,7 +1133,7 @@ function execNagadSystemCallTransfer(order) {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(6000).child(nagadSimIndex())
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(6000).child(simIndex(simTxt))
     if (callSim) {
         clickS(callSim)
     } else {
@@ -1251,7 +1249,7 @@ function execNagadSystemCallTransfer(order) {
 }
 
 
-function execBKashSystemCallTransfer(order) {
+function execBKashSystemCallTransfer(order, simTxt) {
     closeTips()
     // 转账和查询余额 才继续执行
     if (order.operationType != 1 && order.operationType != 3) {
@@ -1287,7 +1285,7 @@ function execBKashSystemCallTransfer(order) {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(15000).child(bKashSimIndex())
+    let callSim = id(callPkg + 'select_dialog_listview').findOne(15000).child(simIndex(simTxt))
     if (callSim) {
         clickS(callSim)
     } else {
@@ -1650,7 +1648,7 @@ function bkashTransfer(i, order) {
     var message = ""
     var balance = ""
 
-    if (bkashHome(bkashItems[i].packageName, order.walletNo, order.pin, bkashItems[i].appName, bkashItems[i].isClone)) {
+    if (bkashHome(bkashItems[i].packageName, order.walletNo, order.pin, bkashItems[i].appName, bkashItems[i].optTxt, bkashItems[i].isClone)) {
         if (order.operationType == 1) { // 钱包转账
             let sendNode = desc('Send Money').findOne(200)
             if (sendNode) {
@@ -2385,7 +2383,7 @@ function getbKashRealPkg(pkg, appName, isClone) {
     return isClone == true ? pkg.substring(0, pkg.length - appName.length - 1) : pkg
 }
 
-function bkashHome(pkg, mobile, pin, appName, isClone) {
+function bkashHome(pkg, mobile, pin, appName,optTxt ,isClone) {
     try {
         let isIndex = true
         let isError = false
@@ -2438,7 +2436,7 @@ function bkashHome(pkg, mobile, pin, appName, isClone) {
 
                 let btnOperators = id(bKashAgentId('fl_item_host')).find()
                 log('node size = ' + btnOperators.length)
-                let index = indexOpertor()
+                let index = indexOpertor(optTxt)
                 if (index < btnOperators.length) {
                     let btnOperator = btnOperators[index]
                     clickS(btnOperator) && sleep(600)
