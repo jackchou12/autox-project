@@ -327,6 +327,8 @@ function getPkgItems(name) {
     let pkgList = getAgentPackageNameList(name)
     pkgList.forEach(p => {
         items.push({
+            simTxt: "",
+            optTxt: "",
             account: "",
             appName: getAppName(p),
             packageName: p,
