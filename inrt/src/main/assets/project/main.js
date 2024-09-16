@@ -1135,9 +1135,15 @@ function execNagadSystemCallTransfer(order, simTxt) {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(6000).child(simIndex(simTxt))
-    if (callSim) {
-        clickS(callSim)
+    let callSimList = id(callPkg + 'select_dialog_listview').findOne(15000)
+    if (callSimList) {
+        let callSim = callSimList.child(simIndex(simTxt))
+        if (callSim)
+            clickS(callSim)
+        else {
+            result = 2
+            message = "未找到拨号按钮！"
+        }
     } else {
         result = 2
         message = "未找到拨号按钮！"
@@ -1287,14 +1293,19 @@ function execBKashSystemCallTransfer(order, simTxt) {
         result = 2
         message = "未找到拨号按钮！"
     }
-    let callSim = id(callPkg + 'select_dialog_listview').findOne(15000).child(simIndex(simTxt))
-    if (callSim) {
-        clickS(callSim)
+    let callSimList = id(callPkg + 'select_dialog_listview').findOne(15000)
+    if (callSimList) {
+        let callSim = callSimList.child(simIndex(simTxt))
+        if (callSim)
+            clickS(callSim)
+        else {
+            result = 2
+            message = "未找到拨号按钮！"
+        }
     } else {
         result = 2
         message = "未找到拨号按钮！"
     }
-
     if (result == 0) {
         let dialog1_input = id("com.android.phone:id/input_field").findOne(15000)
         let dialog1_button = id("android:id/button1").findOne(1000)
