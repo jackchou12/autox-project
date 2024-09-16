@@ -421,7 +421,7 @@ function addbKashItemView(p) {
                 <Spinner margin="12 0" id="bKashSimSpinner" visibility="gone" />
             </horizontal>
             <horizontal>
-                <text text="Operator" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10"  />
+                <text text="Operator" marginLeft="5" textColor="black" w="auto" textStyle="bold" marginRight="10" />
                 <text id="bKashOptTxt" text="" w="*" color="#666666" />
                 <Spinner margin="12 0" id="bKashOptSpinner" visibility="gone" />
             </horizontal>
@@ -1120,7 +1120,8 @@ function execNagadSystemCallTransfer(order, simTxt) {
 
     let callPkg = 'com.google.android.dialer:id/'
     let btnPound = id(callPkg + 'pound').findOne(10000)
-    clickS(btnPound) && sleep(1000)
+    if (btnPound)
+        clickS(btnPound)
 
     let inputNode = id(callPkg + 'digits').findOne(1000)
     if (inputNode) {
@@ -1236,14 +1237,19 @@ function execNagadSystemCallTransfer(order, simTxt) {
         let cancel_button = id("android:id/button2").findOne(1000)
 
         if (findResult && cancel_button) {
-            result = 1
-            message = findResult.text()
-            var s1 = message.substring(message.indexOf('TrxID: ')).replace('TrxID: ', '')
-            transId = s1.substring(0, s1.indexOf('\n'))
-            var s2 = message.substring(message.indexOf('Balance: ')).replace('Balance: ', '')
-            balance = s2.substring(0, s2.indexOf('\n'))
-            message = ""
-            clickS(cancel_button)
+            try {
+                message = findResult.text()
+                var s1 = message.substring(message.indexOf('TrxID: ')).replace('TrxID: ', '')
+                transId = s1.substring(0, s1.indexOf('\n'))
+                var s2 = message.substring(message.indexOf('Balance: ')).replace('Balance: ', '')
+                balance = s2.substring(0, s2.indexOf('\n'))
+                result = 1
+                message = ""
+                clickS(cancel_button)
+            } catch (e) {
+                result = 0
+                message = "结果解析出错！"
+            }
         } else {
             result = 0
             message = "转账超时，回执弹窗未找到！"
@@ -1273,7 +1279,8 @@ function execBKashSystemCallTransfer(order, simTxt) {
     // let callPkg = 'com.android.contacts:id/'
     let callPkg = 'com.google.android.dialer:id/'
     let btnPound = id(callPkg + 'pound').findOne(10000)
-    clickS(btnPound)
+    if (btnPound)
+        clickS(btnPound)
 
     let inputNode = id(callPkg + 'digits').findOne(1000)
     if (inputNode) {
@@ -1377,12 +1384,17 @@ function execBKashSystemCallTransfer(order, simTxt) {
         let message_tv = id("com.android.phone:id/ussd_message").findOne(15000)
         let cancel_button = id("android:id/button2").findOne(1000)
         if (message_tv && cancel_button) {
-            result = 1
-            message = message_tv.text()
-            balance = message.substring(message.indexOf('Current balance ')).replace('Current balance ', '')
-            balance = balance.substring(0, balance.indexOf('. '))
-            message = ""
-            clickS(cancel_button)
+            try {
+                result = 1
+                message = message_tv.text()
+                balance = message.substring(message.indexOf('Current balance ')).replace('Current balance ', '')
+                balance = balance.substring(0, balance.indexOf('. '))
+                message = ""
+                clickS(cancel_button)
+            } catch (e) {
+                result = 0
+                message = "结果解析出错！"
+            }
         } else {
             result = 2
             message = "获取余额失败！"
@@ -1398,10 +1410,15 @@ function execBKashSystemCallTransfer(order, simTxt) {
                 if (result == 0) {
                     message = findResult[1].text()
                     if (message.includes('TrxID ')) {
-                        transId = getTransId(message)
-                        balance = getBalance(message)
-                        result = 1
-                        message = ""
+                        try {
+                            transId = getTransId(message)
+                            balance = getBalance(message)
+                            result = 1
+                            message = ""
+                        } catch (e) {
+                            result = 0
+                            message = "结果解析出错！"
+                        }
                     } else {
                         result = 2
                         message = message.substring(0, 15)
@@ -2396,7 +2413,7 @@ function getbKashRealPkg(pkg, appName, isClone) {
     return isClone == true ? pkg.substring(0, pkg.length - appName.length - 1) : pkg
 }
 
-function bkashHome(pkg, mobile, pin, appName,optTxt ,isClone) {
+function bkashHome(pkg, mobile, pin, appName, optTxt, isClone) {
     try {
         let isIndex = true
         let isError = false
