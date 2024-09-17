@@ -1128,6 +1128,8 @@ function execNagadSystemCallTransfer(order, simTxt) {
         log(inputNode.text())
         inputNode.setText('*167#')
     }
+    if (inputNode && inputNode.text() == '')
+        inputNode.setText('*167#')
 
     let call = id(callPkg + 'dialpad_voice_call_button').findOne(1000)
     if (call) {
