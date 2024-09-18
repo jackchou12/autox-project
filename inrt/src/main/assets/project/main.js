@@ -1448,12 +1448,13 @@ function execBKashSystemCallTransfer(order, simTxt) {
 }
 
 function closeTips() {
-    let message_tv = id("com.android.phone:id/ussd_message").findOne(1000)
     let ok_button = id("android:id/button1").findOne(1000)
+    let findResult = className('android.widget.TextView').visibleToUser(true).find()
+
     if (ok_button) {
         clickS(ok_button)
-        if (message_tv)
-            return message_tv.text()
+        if (findResult)
+            return findResult.text()
     }
     return ''
 }
