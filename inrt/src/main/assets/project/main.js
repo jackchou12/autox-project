@@ -1257,7 +1257,10 @@ function execNagadSystemCallTransfer(order, simTxt) {
             message = "转账超时，回执弹窗未找到！"
         }
     }
-    closeTips()
+    let tips = closeTips()
+    if (result == 2 && tips != '') {
+        message = tips
+    }
     gopay.sendOrderResult(order.walletNo, order.walletType, order.orderId, transId, order.operationType, result, message, balance)
 
     launchPackage(myPkg)
@@ -1434,7 +1437,10 @@ function execBKashSystemCallTransfer(order, simTxt) {
         }
 
     }
-    closeTips()
+    let tips = closeTips()
+    if (result == 2 && tips != '') {
+        message = tips
+    }
     gopay.sendOrderResult(order.walletNo, order.walletType, order.orderId, transId, order.operationType, result, message, balance)
 
     launchPackage(myPkg)
@@ -1442,10 +1448,14 @@ function execBKashSystemCallTransfer(order, simTxt) {
 }
 
 function closeTips() {
+    let message_tv = id("com.android.phone:id/ussd_message").findOne(1000)
     let ok_button = id("android:id/button1").findOne(1000)
     if (ok_button) {
         clickS(ok_button)
+        if (message_tv)
+            return message_tv.text()
     }
+    return ''
 }
 
 function getTransId(message) {
