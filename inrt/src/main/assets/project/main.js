@@ -1453,8 +1453,8 @@ function closeTips() {
 
     if (ok_button) {
         clickS(ok_button)
-        if (findResult)
-            return findResult.text()
+        if (findResult && findResult.length > 1)
+            return findResult[1].text()
     }
     return ''
 }
